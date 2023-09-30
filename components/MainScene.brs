@@ -4,13 +4,13 @@
 ' Note that we need to import this file in MainScene.xml using relative path.
 sub Init()
     ' set background color for scene. Applied only if backgroundUri has empty value
-    m.top.backgroundColor = "0x000000"
+    m.top.backgroundColor = "#000000"
     m.top.backgroundUri = ""
-    m.loadingIndicator = m.top.FindNode("loadingIndicator") ' store loadingIndicator node to m
     InitScreenStack()
     m.GridScreen = CreateObject("roSGNode", "GridScreen")
     ShowScreen(m.GridScreen) ' show GridScreen
     m.top.FindNode("rowList").ObserveField("rowItemSelected", "OnItemClicked")
+    m.loadingIndicator = m.top.FindNode("loadingIndicator")
     RunContentTask() ' retrieving content
 end sub
 

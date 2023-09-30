@@ -19,7 +19,7 @@
         <Label
 	        id="titleLabel"
 	        width="300"
-            maxLines="2"
+            maxLines="3"
             translation="[0,150]"
             horizAlign="left"
             vertAlign="bottom"

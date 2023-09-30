@@ -9,22 +9,23 @@ end sub
 
 sub GetContent()
     cameraNumber = m.top.content.id.toStr()
-    time = CreateObject("roDateTime").AsSeconds().toStr()
-    url = "https://traffic.ottawa.ca/map/camera?id=" + cameraNumber + "&timems=" + time
-    file = "tmp:/camera" + cameraNumber + time + ".jpg"
-    
+    timems = CreateObject("roDateTime").AsSeconds().toStr()
+    url = "https://traffic.ottawa.ca/map/camera?id=" + cameraNumber
+    file = "tmp:/camera" + timems + ".jpg"
+
     utrans = CreateObject("roURLTransfer")
     utrans.SetURL(url)
     utrans.SetCertificatesFile("common:/certs/ca-bundle.crt")
     utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
     utrans.GetToFile(file)
-    
+
     contentNode = CreateObject("roSGNode", "ContentNode")
     contentNode.Update({
         hdPosterUrl: file,
         title: m.top.content.title,
         id: m.top.content.id
     }, true)
+    print contentNode
     ' populate content field with root content node.
     ' Observer(see OnMainContentLoaded in MainScene.brs) is invoked at that moment
     m.top.content = contentNode

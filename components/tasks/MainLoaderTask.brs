@@ -7,13 +7,7 @@ sub Init()
     m.top.functionName = "GetContent"
 end sub
 
-sub GetContent()
-    cameraListRequest = CreateObject("roURLTransfer")
-    cameraListRequest.SetURL("https://traffic.ottawa.ca/map/camera_list")
-    cameraListRequest.SetCertificatesFile("common:/certs/ca-bundle.crt")
-    response = cameraListRequest.GetToString()
-    cameras = ParseJson(response)
-
+sub GetCookie()
     urlTransfer = CreateObject("roURLTransfer")
     urlTransfer.SetURL("https://traffic.ottawa.ca/map/")
     urlTransfer.SetCertificatesFile("common:/certs/ca-bundle.crt")
@@ -21,7 +15,18 @@ sub GetContent()
     urlTransfer.GetToString()
     m.global.addFields({ "cookies": urlTransfer.GetCookies("traffic.ottawa.ca", "/map")[0] })
     print m.global.cookies
+end sub
+
+sub GetContent()
+    GetCookie()
+
+    cameraListRequest = CreateObject("roURLTransfer")
+    cameraListRequest.SetURL("https://traffic.ottawa.ca/map/camera_list")
+    cameraListRequest.SetCertificatesFile("common:/certs/ca-bundle.crt")
+    response = cameraListRequest.GetToString()
+
     ' parse the feed and build a tree of ContentNodes to populate the GridView
+    cameras = ParseJson(response)
 
     if cameras <> invalid
         rows = {}
@@ -58,10 +63,11 @@ end sub
 
 function GetRowItemData(camera as object) as object
     cameraNumber = camera.number.toStr()
+    url = "https://traffic.ottawa.ca/map/camera?id=" + cameraNumber
     file = "tmp:/camera" + cameraNumber + ".jpg"
 
     utrans = CreateObject("roURLTransfer")
-    utrans.SetURL("https://traffic.ottawa.ca/map/camera?id=" + cameraNumber)
+    utrans.SetURL(url)
     utrans.SetCertificatesFile("common:/certs/ca-bundle.crt")
     utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
     utrans.GetToFile(file)

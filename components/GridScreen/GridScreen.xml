@@ -12,17 +12,19 @@
         <RowList
             itemComponentName="RowListItemComponent"
             id="rowList"
-            numRows="5"
-            translation="[80,200]"
-            itemSize="[1800,300]"
-            itemSpacing="[20,0]"
-            rowItemSize="[[300,200]]"
-            rowItemSpacing="[[40,0]]"
+            numRows="4"
+            translation="[50,100]"
+            itemSize="[1860,360]"
+            itemSpacing="[0,10]"
+            rowItemSize="[[300,270]]"
+            rowItemSpacing="[[30,0]]"
             showRowCounter="[true]"
             rowLabelOffset="[[50,20]]"
             focusXOffset="[50]"
+            focusBitmapBlendColor="#139BCC"
             showRowLabel="[true]"
-            rowFocusAnimationStyle="floatingfocus"
+            rowFocusAnimationStyle="fixedFocusWrap"
+            vertFocusAnimationStyle="fixedFocusWrap"
         />
     </children>
 </component>

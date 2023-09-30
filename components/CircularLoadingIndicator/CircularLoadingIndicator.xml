@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<component name="CircularLoadingIndicator" extends="Group">
+    <script type="text/brightscript" uri="CircularLoadingIndicator.brs" />
+
+    <children>
+        <Poster
+            id="progressCircle"
+            uri="pkg:/images/loader.png"
+            loadDisplayMode="scaleToFit"
+            width="50"
+            height="50"
+            scaleRotateCenter="[25,25]"
+        />
+    </children>
+</component>
