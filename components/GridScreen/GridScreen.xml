@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--********** Copyright 2020 Roku Corp.  All Rights Reserved. **********-->
+
+<component name="GridScreen" extends="Group"  initialFocus="RowList">
+    <script type="text/brightscript" uri="GridScreen.brs" />
+	 <interface>
+        <!-- Specifies the content for the Grid -->
+        <field id="content" type="node" alias="RowList.content" />
+    </interface>
+    <children>
+         <!-- Label with title and length of content -->
+        <RowList
+            itemComponentName="RowListItemComponent"
+            id="rowList"
+            numRows="5"
+            translation="[80,200]"
+            itemSize="[1100,300]"
+            itemSpacing="[20,0]"
+            rowItemSize="[[300,200]]"
+            rowItemSpacing="[[40,0]]"
+            showRowCounter="[true]"
+            rowLabelOffset="[[50,20]]"
+            focusXOffset="[50]"
+            showRowLabel="[true]"
+            rowFocusAnimationStyle="floatingfocus"
+        />
+    </children>
+</component>

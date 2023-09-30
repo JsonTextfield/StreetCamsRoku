@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2020 Roku, Inc. All rights reserved. -->
+
+<component name="CameraScreen" extends="Group">
+    <interface>
+      <field id="camera" type="node" onChange="OnContentSet" />
+    </interface>
+    <script type="text/brightscript" uri="CameraScreen.brs" />
+    <script type="text/brightscript" uri="../UILogic/ContentTaskLogic.brs" />
+    <children>
+        <!-- Set loadWidth/loadHeight and loadDisplayMode for better performance -->
+        <Rectangle
+            id="labelBackground"
+            color="0x000000"
+            width="1280.0"
+            height="720.0">
+            <Poster
+                id="poster"
+                loadDisplayMode="scaleToFit"
+                loadWidth="1280"
+                loadHeight="720"
+                width="1280"
+                height="720"/>
+            <Rectangle
+                id="labelBackground"
+                translation="[0,680]"
+                color="0x00000088"
+                width="1280.0"
+                height="40.0">
+                <Label
+                    id="titleLabel"
+                    width="1280"
+                    height="40"
+                    vertAlign="center"
+                    wrap="true"
+                    font="font:MediumSystemFont"/>
+            </Rectangle>
+        </Rectangle>
+        <Timer
+            id="testTimer"
+            repeat="true"
+            duration="10"
+        />
+    </children>
+</component>
