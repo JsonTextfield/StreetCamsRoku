@@ -4,11 +4,14 @@
 ' Note that we need to import this file in GridScreen.xml using relative path.
 sub Init()
     m.testtimer = m.top.findNode("testTimer")
+    m.testtimer.repeat = true
+    m.testtimer.duration = 4
     m.testtimer.ObserveField("fire", "RunCameraContentTask")
     m.testtimer.control = "start"
 end sub
 
 sub RunCameraContentTask()
+    m.top.FindNode("backgroundImage").uri = m.top.FindNode("image").uri
     m.contentTask = CreateObject("roSGNode", "CameraLoaderTask") ' create task for feed retrieving
     m.contentTask.content = m.top.camera
     ' observe content so we can know when feed content will be parsed
