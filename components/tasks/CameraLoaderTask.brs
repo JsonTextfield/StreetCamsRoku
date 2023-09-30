@@ -8,14 +8,17 @@ sub Init()
 end sub
 
 sub GetContent()
-    cameraNumber = m.top.content.id
-    random = RND(1000000).toStr()
-    file = "tmp:/camera" + cameraNumber.toStr() + random + ".jpg"
+    cameraNumber = m.top.content.id.toStr()
+    time = CreateObject("roDateTime").AsSeconds().toStr()
+    url = "https://traffic.ottawa.ca/map/camera?id=" + cameraNumber + "&timems=" + time
+    file = "tmp:/camera" + cameraNumber + time + ".jpg"
+    
     utrans = CreateObject("roURLTransfer")
-    utrans.SetURL("https://traffic.ottawa.ca/map/camera?id=" + cameraNumber.toStr())
+    utrans.SetURL(url)
     utrans.SetCertificatesFile("common:/certs/ca-bundle.crt")
     utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
     utrans.GetToFile(file)
+    
     contentNode = CreateObject("roSGNode", "ContentNode")
     contentNode.Update({
         hdPosterUrl: file,

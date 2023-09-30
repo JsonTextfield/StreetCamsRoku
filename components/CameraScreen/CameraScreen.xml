@@ -3,43 +3,38 @@
 
 <component name="CameraScreen" extends="Group">
     <interface>
-      <field id="camera" type="node" onChange="OnContentSet" />
+        <field id="camera" type="node" onChange="OnContentSet" />
     </interface>
     <script type="text/brightscript" uri="CameraScreen.brs" />
     <script type="text/brightscript" uri="../UILogic/ContentTaskLogic.brs" />
     <children>
         <!-- Set loadWidth/loadHeight and loadDisplayMode for better performance -->
+        <Poster
+            id="image"
+            loadDisplayMode="scaleToFit"
+            loadWidth="1920"
+            loadHeight="1080"
+            width="1920"
+            height="1080" />
         <Rectangle
             id="labelBackground"
-            color="0x000000"
-            width="1280.0"
-            height="720.0">
-            <Poster
-                id="poster"
-                loadDisplayMode="scaleToFit"
-                loadWidth="1280"
-                loadHeight="720"
-                width="1280"
-                height="720"/>
-            <Rectangle
-                id="labelBackground"
-                translation="[0,680]"
-                color="0x00000088"
-                width="1280.0"
-                height="40.0">
-                <Label
-                    id="titleLabel"
-                    width="1280"
-                    height="40"
-                    vertAlign="center"
-                    wrap="true"
-                    font="font:MediumSystemFont"/>
-            </Rectangle>
+            translation="[0,1020]"
+            color="0x00000088"
+            width="1920"
+            height="60">
+            <Label
+                id="title"
+                width="1920"
+                height="40"
+                translation="[50,10]"
+                vertAlign="center"
+                wrap="true"
+                font="font:MediumSystemFont" />
         </Rectangle>
         <Timer
             id="testTimer"
             repeat="true"
-            duration="10"
+            duration="4"
         />
     </children>
 </component>

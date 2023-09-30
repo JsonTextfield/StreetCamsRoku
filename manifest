@@ -1,7 +1,7 @@
 # Copyright (c) 2020 Roku, Inc. All rights reserved.
 
 # Channel Details
-title=Ottawa Street Cameras
+title=Ottawa StreetCams
 major_version=1
 minor_version=0
 build_version=1
@@ -13,7 +13,7 @@ mm_icon_focus_hd=pkg:/images/icon_focus_hd.jpg
 splash_screen_hd=pkg:/images/splash_hd.jpg
 splash_screen_fhd=pkg:/images/splash_fhd.jpg
 splash_color=#139BCC
-splash_min_time=5000
+splash_min_time=2000
 
 # Resolution
 ui_resolutions=fhd

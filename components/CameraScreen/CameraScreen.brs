@@ -8,12 +8,25 @@ sub Init()
     m.testtimer.control = "start"
 end sub
 
+sub RunCameraContentTask()
+    m.contentTask = CreateObject("roSGNode", "CameraLoaderTask") ' create task for feed retrieving
+    m.contentTask.content = m.top.camera
+    ' observe content so we can know when feed content will be parsed
+    m.contentTask.ObserveField("content", "OnCameraContentLoaded")
+    m.contentTask.control = "run" ' GetContent(see MainLoaderTask.brs) method is executed
+end sub
+
+sub OnCameraContentLoaded() ' invoked when content is ready to be used
+    m.top.camera = m.contentTask.content ' populate GridScreen with content
+    OnContentSet()
+end sub
+
 sub OnContentSet() ' invoked when item metadata retrieved
     camera = m.top.camera
     ' set poster uri if content is valid
     if camera <> invalid
-        m.top.FindNode("poster").uri = camera.hdPosterUrl
-        m.top.FindNode("titleLabel").text = camera.title
+        m.top.FindNode("image").uri = camera.hdPosterUrl
+        m.top.FindNode("title").text = camera.title
     end if
 end sub
 
@@ -29,18 +42,3 @@ function OnkeyEvent(key as string, press as boolean) as boolean
     ' or false if it did not handle the event.
     return result
 end function
-
-sub RunCameraContentTask()
-    m.contentTask = CreateObject("roSGNode", "CameraLoaderTask") ' create task for feed retrieving
-    m.contentTask.content = m.top.camera
-    ' observe content so we can know when feed content will be parsed
-    m.contentTask.ObserveField("content", "OnCameraContentLoaded")
-    m.contentTask.control = "run" ' GetContent(see MainLoaderTask.brs) method is executed
-end sub
-
-sub OnCameraContentLoaded() ' invoked when content is ready to be used
-    m.top.camera = m.contentTask.content ' populate GridScreen with content
-    OnContentSet()
-end sub
-
-
