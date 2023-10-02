@@ -9,23 +9,12 @@ end sub
 
 sub GetContent()
     camera = m.top.content
-
-    timems = CreateObject("roDateTime").AsSeconds().toStr()
-    file = "tmp:/camera" + timems + ".jpg"
-
-    utrans = CreateObject("roURLTransfer")
-    utrans.SetURL(camera.url)
-    utrans.SetCertificatesFile("common:/certs/ca-bundle.crt")
-    if camera.city = "ottawa"
-        utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
-    end if
-    utrans.GetToFile(file)
-
+    
     contentNode = CreateObject("roSGNode", "ContentNode")
     contentNode.Update({
         city: camera.city,
         url: camera.url,
-        hdPosterUrl: file,
+        hdPosterUrl: GetCameraImage(camera),
         title: m.top.content.title,
         id: m.top.content.id
     }, true)
@@ -35,3 +24,19 @@ sub GetContent()
     ? contentNode
     m.top.content = contentNode
 end sub
+
+
+function GetCameraImage(camera) as string
+    if camera.city <> "ottawa" then return camera.url
+    file = "tmp:/" + CreateObject("roDeviceInfo").GetRandomUUID() + ".jpg"
+
+    utrans = CreateObject("roURLTransfer")
+    utrans.SetURL(camera.url)
+    utrans.SetCertificatesFile("common:/certs/ca-bundle.crt")
+    if camera.city = "ottawa"
+        utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
+    end if
+    utrans.GetToFile(file)
+
+    return file
+end function

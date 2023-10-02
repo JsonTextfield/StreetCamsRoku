@@ -41,6 +41,7 @@
                         height="40"
                         translation="[50,10]"
                         vertAlign="center"
+                        horizAlign = "center"
                         wrap="true"
                         font="font:MediumSystemFont" />
                 </Rectangle>

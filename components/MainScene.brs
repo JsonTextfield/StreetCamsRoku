@@ -3,14 +3,13 @@
 ' entry point of  MainScene
 ' Note that we need to import this file in MainScene.xml using relative path.
 sub Init()
-
     m.prefs = CreateObject("roRegistrySection", "prefs")
 
     if not m.prefs.Exists("city") then m.prefs.Write("city", "toronto")
     if not m.prefs.Exists("viewMode") then m.prefs.Write("viewMode", "list")
     if not m.prefs.Exists("sortMode") then m.prefs.Write("sortMode", "name")
-    
-    city = m.prefs.Read("city")
+
+    m.city = m.prefs.Read("city")
 
     SetUpGUI()
     InitScreenStack()
@@ -29,7 +28,7 @@ sub SetUpGUI()
     m.top.backgroundUri = ""
 
     m.overhang = m.top.FindNode("main_overhang")
-    m.overhang.title = m.prefs.Read("city")
+    m.overhang.title = m.city
 
     deviceInfo = CreateObject("roDeviceInfo")
     ? deviceInfo.GetDisplaySize()
@@ -68,7 +67,18 @@ function OnkeyEvent(key as string, press as boolean) as boolean
         end if
 
         if key = "options"
-            ? "Show Options"
+            if m.city = "toronto"
+                m.prefs.Write("city", "montreal")
+            else if m.city = "montreal"
+                m.prefs.Write("city", "calgary")
+            else if m.city = "calgary"
+                m.prefs.Write("city", "ottawa")
+            else
+                m.prefs.Write("city", "toronto")
+            end if
+            m.city = m.prefs.Read("city")
+            SetUpGUI()
+            RunContentTask()
         end if
     end if
     ' The OnKeyEvent() function must return true if the component handled the event,

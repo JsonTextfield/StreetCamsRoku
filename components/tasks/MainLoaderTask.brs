@@ -12,43 +12,93 @@ sub GetContent()
 
     m.prefs = CreateObject("roRegistrySection", "prefs")
 
-    if not m.prefs.Exists("city") then m.prefs.Write("city", "ottawa")
-    if not m.prefs.Exists("viewMode") then m.prefs.Write("viewMode", "list")
-    if not m.prefs.Exists("sortMode") then m.prefs.Write("sortMode", "name")
+    LoadCity(m.prefs.Read("city"))
 
-    city = "montreal"
+end sub
+
+function CreateCamera(cameraJson, city) as object
+    if city = "calgary"
+        return {
+            city: city,
+            name: cameraJson.camera_location,
+            nameFr: "",
+            lat: cameraJson.point.coordinates[1],
+            lon: cameraJson.point.coordinates[0],
+            id: CreateObject("roDateTime").AsSeconds().toStr(),
+            url: cameraJson.camera_url.url,
+        }
+    else if city = "toronto"
+        return {
+            city: city,
+            name: ToTitleCase(cameraJson.properties.MAINROAD + " & " + cameraJson.properties.CROSSROAD),
+            nameFr: "",
+            lat: cameraJson.geometry.coordinates[0][1],
+            lon: cameraJson.geometry.coordinates[0][0],
+            id: cameraJson.properties._id,
+            url: "http://opendata.toronto.ca/transportation/tmc/rescucameraimages/CameraImages/loc" + cameraJson.properties.REC_ID.toStr() + ".jpg",
+        }
+    else if city = "montreal"
+        return {
+            city: city,
+            name: "",
+            nameFr: cameraJson.properties.titre,
+            lat: cameraJson.geometry.coordinates[1],
+            lon: cameraJson.geometry.coordinates[0],
+            id: cameraJson.properties["id-camera"],
+            url: cameraJson.properties["url-image-en-direct"],
+        }
+    else if city = "ottawa"
+        return {
+            city: city,
+            name: cameraJson.description,
+            nameFr: cameraJson.descriptionFr,
+            lat: cameraJson.latitude,
+            lon: cameraJson.longitude,
+            id: cameraJson.number.toStr(),
+            url: "https://traffic.ottawa.ca/map/camera?id=" + cameraJson.number.toStr(),
+        }
+    end if
+end function
+
+sub LoadCity(city)
+    jsonArray = []
 
     if city = "ottawa"
-        LoadOttawa()
+        ' set the cookies
+        urlTransfer = CreateObject("roURLTransfer")
+        urlTransfer.SetURL("https://traffic.ottawa.ca/map/")
+        urlTransfer.SetCertificatesFile("common:/certs/ca-bundle.crt")
+        urlTransfer.EnableCookies()
+        urlTransfer.GetToString()
+        m.global.addFields({
+            "cookies": urlTransfer.GetCookies("traffic.ottawa.ca", "/map")[0],
+        })
+
+        url = "https://traffic.ottawa.ca/map/camera_list"
+        jsonArray = GetJsonArray(url)
+
     else if city = "montreal"
-        LoadMontreal()
+        url = "https://ville.montreal.qc.ca/circulation/sites/ville.montreal.qc.ca.circulation/files/cameras-de-circulation.json"
+        jsonArray = GetJsonArray(url).features
+
     else if city = "toronto"
-        LoadToronto()
+        url = "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/a3309088-5fd4-4d34-8297-77c8301840ac/resource/4a568300-c7f8-496d-b150-dff6f5dc6d4f/download/Traffic%20Camera%20List.geojson"
+        jsonArray = GetJsonArray(url).features
+
     else if city = "calgary"
-        LoadCalgary()
+        url = "https://data.calgary.ca/resource/k7p9-kppz.json"
+        jsonArray = GetJsonArray(url)
     end if
-
-end sub
-
-sub LoadCalgary()
-    url = "https://data.calgary.ca/resource/k7p9-kppz.json"
-    jsonArray = GetJsonArray(url)
 
     if jsonArray <> invalid
         rows = {}
         for each cameraJson in jsonArray
-            camera = {
-                city: "calgary",
-                name: cameraJson.camera_location,
-                nameFr: "",
-                lat: cameraJson.point.coordinates[1],
-                lon: cameraJson.point.coordinates[0],
-                id: CreateObject("roDateTime").AsSeconds().toStr(),
-                url: cameraJson.camera_url.url,
-                sortableName: GetSortableName(cameraJson.camera_location),
-            }
+            camera = CreateCamera(cameraJson, city)
 
-            letter = GetSectionIndex(GetSortableName(camera.name).split("")[0])
+            if camera.name <> "" then name = camera.name else name = camera.nameFr
+
+            letter = GetSectionIndex(GetSortableName(name, city).split("")[0])
+
             if not rows.doesExist(letter)
                 rows[letter] = {
                     title: letter,
@@ -60,118 +110,13 @@ sub LoadCalgary()
 
         UpdateContent(rows)
     end if
-end sub
 
-sub LoadToronto()
-    url = "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/a3309088-5fd4-4d34-8297-77c8301840ac/resource/4a568300-c7f8-496d-b150-dff6f5dc6d4f/download/Traffic%20Camera%20List.geojson"
-    jsonArray = GetJsonArray(url).features
-
-    if jsonArray <> invalid
-        rows = {}
-        for each cameraJson in jsonArray
-            camera = {
-                city: "toronto",
-                name: cameraJson.properties.MAINROAD + " & " + cameraJson.properties.CROSSROAD,
-                nameFr: "",
-                lat: cameraJson.geometry.coordinates[0][1],
-                lon: cameraJson.geometry.coordinates[0][0],
-                id: cameraJson.properties._id,
-                url: "http://opendata.toronto.ca/transportation/tmc/rescucameraimages/CameraImages/loc" + cameraJson.properties.REC_ID.toStr() + ".jpg",
-                sortableName: GetSortableName(cameraJson.properties.MAINROAD + " & " + cameraJson.properties.CROSSROAD),
-            }
-
-            letter = GetSectionIndex(GetSortableName(camera.name).split("")[0])
-            if not rows.doesExist(letter)
-                rows[letter] = {
-                    title: letter,
-                    children: [],
-                }
-            end if
-            rows[letter].children.Push(GetRowItemData(camera))
-        end for
-
-        UpdateContent(rows)
-    end if
-end sub
-
-sub LoadMontreal()
-    url = "https://ville.montreal.qc.ca/circulation/sites/ville.montreal.qc.ca.circulation/files/cameras-de-circulation.json"
-    jsonArray = GetJsonArray(url).features
-
-    if jsonArray <> invalid
-        rows = {}
-        for each cameraJson in jsonArray
-            camera = {
-                city: "montreal",
-                name: "",
-                nameFr: cameraJson.properties.titre,
-                lat: cameraJson.geometry.coordinates[1],
-                lon: cameraJson.geometry.coordinates[0],
-                id: cameraJson.properties["id-camera"],
-                url: cameraJson.properties["url-image-en-direct"],
-                sortableName: GetSortableNameMontreal(cameraJson.properties.titre),
-            }
-
-            letter = GetSectionIndex(GetSortableNameMontreal(camera.nameFr).split("")[0])
-            if not rows.doesExist(letter)
-                rows[letter] = {
-                    title: letter,
-                    children: [],
-                }
-            end if
-            rows[letter].children.Push(GetRowItemData(camera))
-        end for
-
-        UpdateContent(rows)
-    end if
-end sub
-
-sub LoadOttawa()
-    ' set the cookies
-    urlTransfer = CreateObject("roURLTransfer")
-    urlTransfer.SetURL("https://traffic.ottawa.ca/map/")
-    urlTransfer.SetCertificatesFile("common:/certs/ca-bundle.crt")
-    urlTransfer.EnableCookies()
-    urlTransfer.GetToString()
-    m.global.addFields({
-        "cookies": urlTransfer.GetCookies("traffic.ottawa.ca", "/map")[0],
-    })
-
-    url = "https://traffic.ottawa.ca/map/camera_list"
-    jsonArray = GetJsonArray(url)
-
-    if jsonArray <> invalid
-        rows = {}
-        for each cameraJson in jsonArray
-            camera = {
-                city: "ottawa",
-                name: cameraJson.description,
-                nameFr: cameraJson.descriptionFr,
-                lat: cameraJson.latitude,
-                lon: cameraJson.longitude,
-                id: cameraJson.number.toStr(),
-                url: "https://traffic.ottawa.ca/map/camera?id=" + cameraJson.number.toStr(),
-                sortableName: GetSortableName(cameraJson.description),
-            }
-
-            letter = GetSectionIndex(GetSortableName(camera.name).split("")[0])
-            if not rows.doesExist(letter)
-                rows[letter] = {
-                    title: letter,
-                    children: [],
-                }
-            end if
-            rows[letter].children.Push(GetRowItemData(camera))
-        end for
-
-        UpdateContent(rows)
-    end if
 end sub
 
 sub UpdateContent(rows)
     rootChildren = []
     for each row in rows.items()
-        row.value.children.SortBy("sortableName")
+        'row.value.children.SortBy("sortableName")
         rootChildren.Push(row.value)
     end for
 
@@ -196,19 +141,29 @@ function GetJsonArray(url) as object
 end function
 
 function GetRowItemData(camera as object) as object
-    viewMode = "gallery"
+
     if camera.name <> "" name = camera.name else name = camera.nameFr
+
+    result = {
+        id: camera.id,
+        title: name,
+        url: camera.url,
+        city: camera.city,
+        sortableName: GetSortableName(name, camera.city),
+    }
+
+    viewMode = "gallery"
     if (viewMode = "list")
-        return {
-            id: camera.id,
-            title: name,
-            url: camera.url,
-            city: camera.city,
-            sortableName: camera.sortableName,
-        }
+        return result
     end if
 
-    file = "tmp:/" + CreateObject("roDateTime").AsSeconds().toStr() + ".jpg"
+    result.AddReplace("hdPosterUrl", GetCameraImage(camera))
+    return result
+end function
+
+function GetCameraImage(camera) as string
+    if camera.city <> "ottawa" then return camera.url
+    file = "tmp:/" + CreateObject("roDeviceInfo").GetRandomUUID() + ".jpg"
 
     utrans = CreateObject("roURLTransfer")
     utrans.SetURL(camera.url)
@@ -218,14 +173,7 @@ function GetRowItemData(camera as object) as object
     end if
     utrans.GetToFile(file)
 
-    return {
-        id: camera.id,
-        title: name,
-        url: camera.url,
-        city: camera.city,
-        sortableName: camera.sortableName,
-        hdPosterUrl: file,
-    }
+    return file
 end function
 
 function GetSectionIndex(character) as string
@@ -239,27 +187,44 @@ function GetSectionIndex(character) as string
 
 end function
 
-function GetSortableNameMontreal(name) as string
+function GetSortableName(name, city) as string
+    if city = "montreal"
+        startIndex = 0
 
-    startIndex = 0
+        if name.StartsWith("Avenue ")
+            startIndex = "Avenue ".Len()
+        else if name.StartsWith("Boulevard ")
+            startIndex = "Boulevard ".Len()
+        else if name.StartsWith("Chemin ")
+            startIndex = "Chemin ".Len()
+        else if name.StartsWith("Rue ")
+            startIndex = "Rue ".Len()
+        end if
 
-    if name.StartsWith("Avenue ")
-        startIndex = "Avenue ".Len()
-    else if name.StartsWith("Boulevard ")
-        startIndex = "Boulevard ".Len()
-    else if name.StartsWith("Chemin ")
-        startIndex = "Chemin ".Len()
-    else if name.StartsWith("Rue ")
-        startIndex = "Rue ".Len()
+        name = Mid(name, startIndex + 1)
     end if
 
-    sortableName = Mid(name, startIndex + 1)
     regex = CreateObject("roRegex", "[^0-9A-ZÀ-Ö]", "i")
 
-    return regex.ReplaceAll(sortableName, "")
+    return regex.ReplaceAll(name, "")
 end function
 
-function GetSortableName(name) as string
-    regex = CreateObject("roRegex", "[\W_]", "i")
-    return regex.ReplaceAll(name, "")
+' Function to convert a string to title case
+function ToTitleCase(inputString as string) as string
+    ' Split the input string into words
+    words = inputString.Tokenize(" ")
+
+    ' Initialize an empty result string
+    result = ""
+
+    ' Loop through the words and capitalize the first letter of each word
+    for each word in words
+        if word <> ""
+            ' Capitalize the first letter and add the word to the result
+            result = result + UCase(Left(word, 1)) + LCase(Mid(word, 2)) + " "
+        end if
+    end for
+
+    ' Remove trailing space and return the result
+    return result.Trim()
 end function
