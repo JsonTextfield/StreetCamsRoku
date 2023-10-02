@@ -3,15 +3,44 @@
 ' entry point of  MainScene
 ' Note that we need to import this file in MainScene.xml using relative path.
 sub Init()
+
+    m.prefs = CreateObject("roRegistrySection", "prefs")
+
+    if not m.prefs.Exists("city") then m.prefs.Write("city", "toronto")
+    if not m.prefs.Exists("viewMode") then m.prefs.Write("viewMode", "list")
+    if not m.prefs.Exists("sortMode") then m.prefs.Write("sortMode", "name")
+    
+    city = m.prefs.Read("city")
+
+    SetUpGUI()
+    InitScreenStack()
+
+    m.GridScreen = CreateObject("roSGNode", "GridScreen")
+    ShowScreen(m.GridScreen) ' show GridScreen
+
+    m.top.FindNode("rowList").ObserveField("rowItemSelected", "OnItemClicked")
+
+    RunContentTask() ' retrieving content
+end sub
+
+sub SetUpGUI()
     ' set background color for scene. Applied only if backgroundUri has empty value
     m.top.backgroundColor = "#000000"
     m.top.backgroundUri = ""
-    InitScreenStack()
-    m.GridScreen = CreateObject("roSGNode", "GridScreen")
-    ShowScreen(m.GridScreen) ' show GridScreen
-    m.top.FindNode("rowList").ObserveField("rowItemSelected", "OnItemClicked")
+
+    m.overhang = m.top.FindNode("main_overhang")
+    m.overhang.title = m.prefs.Read("city")
+
+    deviceInfo = CreateObject("roDeviceInfo")
+    ? deviceInfo.GetDisplaySize()
+
     m.loadingIndicator = m.top.FindNode("loadingIndicator")
-    RunContentTask() ' retrieving content
+    m.loadingIndicator.poster.loadDisplayMode = "scaleToFit"
+    m.loadingIndicator.poster.width = 50
+    m.loadingIndicator.poster.height = 50
+    m.loadingIndicator.poster.uri = "pkg:/images/loader.png"
+    m.loadingIndicator.translation = [deviceInfo.GetDisplaySize().w / 2 - 25, deviceInfo.GetDisplaySize().h / 2 - 25]
+
 end sub
 
 sub OnItemClicked() ' invoked when another item is focused
@@ -36,6 +65,10 @@ function OnkeyEvent(key as string, press as boolean) as boolean
                 CloseScreen(invalid)
                 result = true
             end if
+        end if
+
+        if key = "options"
+            ? "Show Options"
         end if
     end if
     ' The OnKeyEvent() function must return true if the component handled the event,

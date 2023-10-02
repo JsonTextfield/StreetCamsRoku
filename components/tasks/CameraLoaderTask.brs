@@ -8,25 +8,30 @@ sub Init()
 end sub
 
 sub GetContent()
-    cameraNumber = m.top.content.id.toStr()
+    camera = m.top.content
+
     timems = CreateObject("roDateTime").AsSeconds().toStr()
-    url = "https://traffic.ottawa.ca/map/camera?id=" + cameraNumber
     file = "tmp:/camera" + timems + ".jpg"
 
     utrans = CreateObject("roURLTransfer")
-    utrans.SetURL(url)
+    utrans.SetURL(camera.url)
     utrans.SetCertificatesFile("common:/certs/ca-bundle.crt")
-    utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
+    if camera.city = "ottawa"
+        utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
+    end if
     utrans.GetToFile(file)
 
     contentNode = CreateObject("roSGNode", "ContentNode")
     contentNode.Update({
+        city: camera.city,
+        url: camera.url,
         hdPosterUrl: file,
         title: m.top.content.title,
         id: m.top.content.id
     }, true)
-    print contentNode
     ' populate content field with root content node.
     ' Observer(see OnMainContentLoaded in MainScene.brs) is invoked at that moment
+
+    ? contentNode
     m.top.content = contentNode
 end sub

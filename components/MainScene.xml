@@ -8,14 +8,17 @@ Reserved. **********-->
     <script type="text/brightscript" uri="UILogic/ContentTaskLogic.brs" />
     <children>
         <!-- Overhang with Roku Developers logo -->
-        <Label
-            text="Ottawa StreetCams"
+        <Overhang
+            id="main_overhang"
+            logoUri="pkg:/images/logo_small.png"
             translation="[50,50]"
+            showOptions="true"
+            optionsAvailable="true"
         />
         <!-- LoadingIndicator should be visible only in case of waiting for content -->
-        <CircularLoadingIndicator
+        <BusySpinner
             id="loadingIndicator"
-            translation="[935,525]"
+            spinInterval="0.8"
         />
     </children>
 </component>
