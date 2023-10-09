@@ -17,7 +17,7 @@ sub GetContent()
 end sub
 
 function CreateCamera(cameraJson, city) as object
-    if city = "calgary"
+    if city = m.global.city.calgary
         return {
             city: city,
             name: cameraJson.camera_location,
@@ -27,7 +27,7 @@ function CreateCamera(cameraJson, city) as object
             id: CreateObject("roDateTime").AsSeconds().toStr(),
             url: cameraJson.camera_url.url,
         }
-    else if city = "toronto"
+    else if city = m.global.city.toronto
         return {
             city: city,
             name: ToTitleCase(cameraJson.properties.MAINROAD + " & " + cameraJson.properties.CROSSROAD),
@@ -35,9 +35,9 @@ function CreateCamera(cameraJson, city) as object
             lat: cameraJson.geometry.coordinates[0][1],
             lon: cameraJson.geometry.coordinates[0][0],
             id: cameraJson.properties._id,
-            url: "http://opendata.toronto.ca/transportation/tmc/rescucameraimages/CameraImages/loc" + cameraJson.properties.REC_ID.toStr() + ".jpg",
+            url: cameraJson.properties.IMAGEURL,
         }
-    else if city = "montreal"
+    else if city = m.global.city.montreal
         return {
             city: city,
             name: "",
@@ -47,7 +47,7 @@ function CreateCamera(cameraJson, city) as object
             id: cameraJson.properties["id-camera"],
             url: cameraJson.properties["url-image-en-direct"],
         }
-    else if city = "ottawa"
+    else if city = m.global.city.ottawa
         return {
             city: city,
             name: cameraJson.description,
@@ -62,8 +62,7 @@ end function
 
 sub LoadCity(city)
     jsonArray = []
-
-    if city = "ottawa"
+    if city = m.global.city.ottawa
         ' set the cookies
         urlTransfer = CreateObject("roURLTransfer")
         urlTransfer.SetURL("https://traffic.ottawa.ca/map/")
@@ -77,15 +76,15 @@ sub LoadCity(city)
         url = "https://traffic.ottawa.ca/map/camera_list"
         jsonArray = GetJsonArray(url)
 
-    else if city = "montreal"
+    else if city = m.global.city.montreal
         url = "https://ville.montreal.qc.ca/circulation/sites/ville.montreal.qc.ca.circulation/files/cameras-de-circulation.json"
         jsonArray = GetJsonArray(url).features
 
-    else if city = "toronto"
+    else if city = m.global.city.toronto
         url = "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/a3309088-5fd4-4d34-8297-77c8301840ac/resource/4a568300-c7f8-496d-b150-dff6f5dc6d4f/download/Traffic%20Camera%20List.geojson"
         jsonArray = GetJsonArray(url).features
 
-    else if city = "calgary"
+    else if city = m.global.city.calgary
         url = "https://data.calgary.ca/resource/k7p9-kppz.json"
         jsonArray = GetJsonArray(url)
     end if
@@ -95,7 +94,8 @@ sub LoadCity(city)
         for each cameraJson in jsonArray
             camera = CreateCamera(cameraJson, city)
 
-            if camera.name <> "" then name = camera.name else name = camera.nameFr
+            name = camera.name
+            if name = "" then name = camera.nameFr
 
             letter = GetSectionIndex(GetSortableName(name, city).split("")[0])
 
@@ -152,8 +152,8 @@ function GetRowItemData(camera as object) as object
         sortableName: GetSortableName(name, camera.city),
     }
 
-    viewMode = "gallery"
-    if (viewMode = "list")
+    viewMode = m.global.viewMode.gallery
+    if (viewMode = m.global.viewMode.list)
         return result
     end if
 
@@ -162,69 +162,16 @@ function GetRowItemData(camera as object) as object
 end function
 
 function GetCameraImage(camera) as string
-    if camera.city <> "ottawa" then return camera.url
+    if camera.city <> m.global.city.ottawa then return camera.url
     file = "tmp:/" + CreateObject("roDeviceInfo").GetRandomUUID() + ".jpg"
 
     utrans = CreateObject("roURLTransfer")
     utrans.SetURL(camera.url)
     utrans.SetCertificatesFile("common:/certs/ca-bundle.crt")
-    if camera.city = "ottawa"
+    if camera.city = m.global.city.ottawa
         utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
     end if
     utrans.GetToFile(file)
 
     return file
-end function
-
-function GetSectionIndex(character) as string
-    letters = CreateObject("roRegex", "[A-ZÀ-Ö]", "i")
-    numbers = CreateObject("roRegex", "[0-9]", "i")
-    special = CreateObject("roRegex", "[^0-9A-ZÀ-Ö]", "i")
-
-    if special.IsMatch(character) then return "*"
-    if numbers.IsMatch(character) then return "#"
-    return character
-
-end function
-
-function GetSortableName(name, city) as string
-    if city = "montreal"
-        startIndex = 0
-
-        if name.StartsWith("Avenue ")
-            startIndex = "Avenue ".Len()
-        else if name.StartsWith("Boulevard ")
-            startIndex = "Boulevard ".Len()
-        else if name.StartsWith("Chemin ")
-            startIndex = "Chemin ".Len()
-        else if name.StartsWith("Rue ")
-            startIndex = "Rue ".Len()
-        end if
-
-        name = Mid(name, startIndex + 1)
-    end if
-
-    regex = CreateObject("roRegex", "[^0-9A-ZÀ-Ö]", "i")
-
-    return regex.ReplaceAll(name, "")
-end function
-
-' Function to convert a string to title case
-function ToTitleCase(inputString as string) as string
-    ' Split the input string into words
-    words = inputString.Tokenize(" ")
-
-    ' Initialize an empty result string
-    result = ""
-
-    ' Loop through the words and capitalize the first letter of each word
-    for each word in words
-        if word <> ""
-            ' Capitalize the first letter and add the word to the result
-            result = result + UCase(Left(word, 1)) + LCase(Mid(word, 2)) + " "
-        end if
-    end for
-
-    ' Remove trailing space and return the result
-    return result.Trim()
 end function

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="OptionsPanel" extends="ListPanel">
+    <script type="text/brightscript" uri="pkg:/components/OptionsPanel.brs" />
+    <children>
+        <LabelList
+            id="labelList">
+            <ContentNode role="content">
+                <ContentNode title="View" />
+                <ContentNode title="City" />
+                <ContentNode title="Sort" />
+                <ContentNode title="Search" />
+                <ContentNode title="Search by neighbourhood" />
+                <ContentNode title="Favourites" />
+                <ContentNode title="Hidden" />
+                <ContentNode title="Random" />
+                <ContentNode title="Shuffle" />
+                <ContentNode title="About" />
+            </ContentNode>
+        </LabelList>
+    </children>
+</component>

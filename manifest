@@ -13,7 +13,7 @@ mm_icon_focus_hd=pkg:/images/icon_focus_hd.png
 splash_screen_hd=pkg:/images/logo_medium.png
 splash_screen_fhd=pkg:/images/logo_medium.png
 splash_color=#139BCC
-splash_min_time=4000
+splash_min_time=2000
 
 # Resolution
 ui_resolutions=fhd

@@ -3,43 +3,107 @@
 ' entry point of  MainScene
 ' Note that we need to import this file in MainScene.xml using relative path.
 sub Init()
-    m.prefs = CreateObject("roRegistrySection", "prefs")
 
-    if not m.prefs.Exists("city") then m.prefs.Write("city", "toronto")
-    if not m.prefs.Exists("viewMode") then m.prefs.Write("viewMode", "list")
-    if not m.prefs.Exists("sortMode") then m.prefs.Write("sortMode", "name")
+    m.global.addFields({
+        city: {
+            OTTAWA: "Ottawa",
+            MONTREAL: "Montreal",
+            TORONTO: "Toronto",
+            CALGARY: "Calgary"
+        },
+        viewMode: {
+            LIST: "List",
+            MAP: "Map",
+            GALLERY: "Gallery"
+        },
+        sortMode: {
+            NAME: "Name",
+            DISTANCE: "Distance",
+            NEIGHBOURHOOD: "Neighbourhood"
+        }
+    })
+
+    m.prefs = CreateObject("roRegistrySection", "prefs")
 
     m.city = m.prefs.Read("city")
 
-    SetUpGUI()
-    InitScreenStack()
-
-    m.GridScreen = CreateObject("roSGNode", "GridScreen")
-    ShowScreen(m.GridScreen) ' show GridScreen
-
-    m.top.FindNode("rowList").ObserveField("rowItemSelected", "OnItemClicked")
-
-    RunContentTask() ' retrieving content
-end sub
-
-sub SetUpGUI()
     ' set background color for scene. Applied only if backgroundUri has empty value
     m.top.backgroundColor = "#000000"
     m.top.backgroundUri = ""
 
-    m.overhang = m.top.FindNode("main_overhang")
-    m.overhang.title = m.city
-
     deviceInfo = CreateObject("roDeviceInfo")
-    ? deviceInfo.GetDisplaySize()
 
     m.loadingIndicator = m.top.FindNode("loadingIndicator")
     m.loadingIndicator.poster.loadDisplayMode = "scaleToFit"
     m.loadingIndicator.poster.width = 50
     m.loadingIndicator.poster.height = 50
     m.loadingIndicator.poster.uri = "pkg:/images/loader.png"
-    m.loadingIndicator.translation = [deviceInfo.GetDisplaySize().w / 2 - 25, deviceInfo.GetDisplaySize().h / 2 - 25]
+    m.loadingIndicator.translation = [
+        deviceInfo.GetDisplaySize().w / 2 - 25,
+        deviceInfo.GetDisplaySize().h / 2 - 25
+    ]
 
+    InitScreenStack()
+
+
+    m.optionsPanel = m.top.panelSet.createChild("OptionsPanel")
+    'm.optionsPanel.setFocus(true)
+
+    m.GridScreen = m.top.panelSet.createChild("GridScreen")
+
+    'ShowScreen(m.GridScreen)
+
+    m.rowList = m.top.FindNode("rowList")
+    m.rowList.ObserveField("rowItemSelected", "OnItemClicked")
+
+    'm.GridScreen.observeField("focusedChild", "focusChanged")
+
+    m.labelList = m.top.FindNode("labelList")
+    m.labelList.ObserveField("itemSelected", "OnItemSelected")
+
+    m.top.overhang.title = m.city
+    m.top.overhang.logoUri = "pkg:/images/logo_small.png"
+
+    RunContentTask() ' retrieving content
+
+end sub
+
+
+sub OnItemSelected()
+    if m.labelList.itemSelected = 0
+        m.viewModeDialog = CreateObject("roSGNode", "ViewModeDialog")
+        m.viewModeDialog.ObserveField("viewMode", "ChangeViewMode")
+        m.top.dialog = m.viewModeDialog
+    else if m.labelList.itemSelected = 1
+        m.cityDialog = CreateObject("roSGNode", "CityDialog")
+        m.cityDialog.ObserveField("city", "ChangeCity")
+        m.top.dialog = m.cityDialog
+    else if m.labelList.itemSelected = 2
+        m.sortModeDialog = CreateObject("roSGNode", "SortModeDialog")
+        m.sortModeDialog.ObserveField("sortMode", "ChangeSortMode")
+        m.top.dialog = m.sortModeDialog
+    else if m.labelList.itemSelected = 3
+    else if m.labelList.itemSelected = 4
+    else if m.labelList.itemSelected = 5
+        m.top.dialog = CreateObject("roSGNode", "AboutDialog")
+    end if
+end sub
+
+sub ChangeCity()
+    m.city = m.cityDialog.city
+    m.prefs.Write("city", m.city)
+    m.top.overhang.title = m.city
+    RunContentTask()
+end sub
+
+sub focusChanged()
+    if m.GridScreen.isInFocusChain()
+        if not m.rowList.hasFocus()
+            m.rowList.setFocus(true)
+        end if
+    else if m.optionsPanel.isInFocusChain()
+        m.labelList.setFocus(true)
+    end if
 end sub
 
 sub OnItemClicked() ' invoked when another item is focused
@@ -67,18 +131,7 @@ function OnkeyEvent(key as string, press as boolean) as boolean
         end if
 
         if key = "options"
-            if m.city = "toronto"
-                m.prefs.Write("city", "montreal")
-            else if m.city = "montreal"
-                m.prefs.Write("city", "calgary")
-            else if m.city = "calgary"
-                m.prefs.Write("city", "ottawa")
-            else
-                m.prefs.Write("city", "toronto")
-            end if
-            m.city = m.prefs.Read("city")
-            SetUpGUI()
-            RunContentTask()
+            'Show options dialog
         end if
     end if
     ' The OnKeyEvent() function must return true if the component handled the event,

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--********** Copyright 2020 Roku Corp.  All Rights Reserved. **********-->
+<!--********** Copyright 2020 Roku Corp.  All Rights
+Reserved. **********-->
 
 <component name="MainLoaderTask" extends="Task">
     <interface>
         <field id="content" type="node" />
     </interface>
 
-    <script type="text/brightscript" uri="MainLoaderTask.brs" />
+    <script type="text/brightscript" uri="pkg:/components/tasks/MainLoaderTask.brs" />
+    <script type="text/brightscript" uri="pkg:/components/util/CameraUtils.brs" />
 </component>

@@ -3,7 +3,7 @@
 ' entry point of GridScreen
 ' Note that we need to import this file in GridScreen.xml using relative path.
 sub Init()
-    m.testtimer = m.top.findNode("testTimer")
+    m.testtimer = m.top.FindNode("testTimer")
     m.testtimer.repeat = true
     m.testtimer.duration = 4
     m.testtimer.ObserveField("fire", "RunCameraContentTask")

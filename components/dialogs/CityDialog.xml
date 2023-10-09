@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<component name="CityDialog" extends="StandardDialog" initialFocus="buttonArea">
+
+    <script type="text/brightscript" uri="pkg:/components/dialogs/CityDialog.brs" />
+
+    <interface>
+        <field id="city" type="string" />
+    </interface>
+
+    <children>
+        <StdDlgTitleArea primaryTitle="City" />
+        <StdDlgContentArea>
+            <StdDlgItemGroup id="radioButtons">
+                <StdDlgActionCardItem iconType="radiobutton">
+                    <SimpleLabel id="radioLabel1" text="Ottawa" />
+                </StdDlgActionCardItem>
+                <StdDlgActionCardItem iconType="radiobutton">
+                    <SimpleLabel id="radioLabel2" text="Toronto" />
+                </StdDlgActionCardItem>
+                <StdDlgActionCardItem iconType="radiobutton">
+                    <SimpleLabel id="radioLabel3" text="Montreal" />
+                </StdDlgActionCardItem>
+                <StdDlgActionCardItem iconType="radiobutton">
+                    <SimpleLabel id="radioLabel4" text="Calgary" />
+                </StdDlgActionCardItem>
+            </StdDlgItemGroup>
+        </StdDlgContentArea>
+        <StdDlgButtonArea id="buttonArea">
+            <StdDlgButton text="OK" />
+            <StdDlgButton text="Cancel" />
+        </StdDlgButtonArea>
+    </children>
+
+</component>

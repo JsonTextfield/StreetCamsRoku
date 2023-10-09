@@ -9,7 +9,7 @@ end sub
 
 sub GetContent()
     camera = m.top.content
-    
+
     contentNode = CreateObject("roSGNode", "ContentNode")
     contentNode.Update({
         city: camera.city,
@@ -27,13 +27,16 @@ end sub
 
 
 function GetCameraImage(camera) as string
-    if camera.city <> "ottawa" then return camera.url
-    file = "tmp:/" + CreateObject("roDeviceInfo").GetRandomUUID() + ".jpg"
+    uuid = CreateObject("roDeviceInfo").GetRandomUUID()
+
+    if camera.city <> m.global.city.ottawa then return camera.url + "?uuid=" + uuid
+
+    file = "tmp:/" + uuid + ".jpg"
 
     utrans = CreateObject("roURLTransfer")
     utrans.SetURL(camera.url)
     utrans.SetCertificatesFile("common:/certs/ca-bundle.crt")
-    if camera.city = "ottawa"
+    if camera.city = m.global.city.ottawa
         utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
     end if
     utrans.GetToFile(file)

@@ -9,22 +9,24 @@
     <children>
         <!-- Set loadWidth/loadHeight and loadDisplayMode for better performance -->
         <LayoutGroup>
-
-        <Poster
-            id="poster"
-            loadDisplayMode="scaleToZoom"
-            loadWidth="300"
-            loadHeight="200"
-            width="300"
-            height="200"
-        />
-        <Label
-            id="titleLabel"
-            width="300"
-            maxLines="2"
-            wrap="true"
-            font="font:SmallestSystemFont"
-        />
+            <Rectangle
+                color="#999999"
+                width="300"
+                height="200">
+                <Poster
+                    id="poster"
+                    loadDisplayMode="scaleToZoom"
+                    loadWidth="300"
+                    loadHeight="200"
+                    width="300"
+                    height="200" />
+            </Rectangle>
+            <Label
+                id="titleLabel"
+                width="300"
+                maxLines="2"
+                wrap="true"
+                font="font:SmallestSystemFont" />
         </LayoutGroup>
     </children>
 </component>

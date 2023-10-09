@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<component name="AboutDialog" extends="StandardDialog" initialFocus="buttonArea">
+
+  <script type="text/brightscript" uri="pkg:/components/dialogs/AboutDialog.brs" />
+
+  <children>
+    <StdDlgContentArea>
+      <StdDlgTextItem text="Version 1.0.0" />
+      <StdDlgTextItem text="Developed by JsonTextfield" />
+    </StdDlgContentArea>
+    <StdDlgButtonArea id="buttonArea">
+      <StdDlgButton text="OK" />
+    </StdDlgButtonArea>
+    <StdDlgSideCardArea
+      id="buttonArea"
+      horizAlign="left"
+      extendToDialogEdge="true"
+      showDivider="false">
+      <Poster
+        id="sideCardPoster"
+        loadSync="true"
+        loadDisplayMode="limitSize"
+        loadWidth="400"
+        loadHeight="400"
+        width="400"
+        height="400"
+        uri="pkg:/images/logo_medium.png" />
+    </StdDlgSideCardArea>
+  </children>
+</component>

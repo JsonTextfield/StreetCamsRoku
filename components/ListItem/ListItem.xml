@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2020 Roku, Inc. All rights reserved. -->
+
+<component name="ListItem" extends="LayoutGroup">
+    <interface>
+        <field id="itemContent" type="node" onChange="OnContentSet" />
+    </interface>
+    <children>
+        <Label
+            id="title"
+            width="1920"
+            maxLines="2"
+            wrap="true"
+            font="font:MediumSystemFont"
+        />
+        <Label
+            id="neighbourhood"
+            width="1920"
+            maxLines="2"
+            wrap="true"
+            font="font:SmallestSystemFont"
+        />
+    </children>
+</component>

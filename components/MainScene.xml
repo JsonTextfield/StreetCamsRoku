@@ -2,19 +2,11 @@
 <!--********** Copyright 2020 Roku Corp.  All Rights
 Reserved. **********-->
 
-<component name="MainScene" extends="Scene">
+<component name="MainScene" extends="OverhangPanelSetScene">
     <script type="text/brightscript" uri="MainScene.brs" />
     <script type="text/brightscript" uri="UILogic/ScreenStackLogic.brs" />
     <script type="text/brightscript" uri="UILogic/ContentTaskLogic.brs" />
     <children>
-        <!-- Overhang with Roku Developers logo -->
-        <Overhang
-            id="main_overhang"
-            logoUri="pkg:/images/logo_small.png"
-            translation="[50,50]"
-            showOptions="true"
-            optionsAvailable="true"
-        />
         <!-- LoadingIndicator should be visible only in case of waiting for content -->
         <BusySpinner
             id="loadingIndicator"
