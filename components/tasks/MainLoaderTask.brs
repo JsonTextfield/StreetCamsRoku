@@ -7,13 +7,15 @@ sub Init()
     m.top.functionName = "GetContent"
     m.prefs = CreateObject("roRegistrySection", "prefs")
     m.city = m.prefs.Read("city")
+    m.sortMode = m.prefs.Read("sortMode")
+    m.viewMode = m.prefs.Read("viewMode")
 
 end sub
 
 
 sub GetContent()
     LoadCameras(m.city)
-    CreateContentNode(m.city)
+    CreateContentNode(m.city, m.sortMode, m.viewMode)
 end sub
 
 sub LoadCameras(city)
@@ -38,34 +40,51 @@ sub LoadCameras(city)
         for each index in jsonArray
             m.cameras.Push(jsonArray[index])
         end for
+        m.global.addFields({
+            cameras: m.cameras
+        })
     end if
 end sub
 
-sub CreateContentNode(city)
+sub CreateContentNode(city, sortMode, viewMode)
     rows = {}
+    if viewMode = m.global.viewMode.list then rows.children = []
     for each camera in m.cameras
-        name = camera.nameEn
-        if name = "" then name = camera.nameFr
+        if viewMode = m.global.viewMode.list
+            rows.children.Push(GetRowItemData(camera))
+        else
+            section = ""
+            if sortMode = m.global.sortMode.name
+                name = camera.nameEn
+                if name = "" then name = camera.nameFr
+                section = GetSectionIndex(GetSortableName(name, city).split("")[0])
+            else
+                section = camera.neighbourhood
+            end if
 
-        letter = GetSectionIndex(GetSortableName(name, city).split("")[0])
-
-        if not rows.doesExist(letter)
-            rows[letter] = {
-                title: letter,
-                children: [],
-            }
+            if not rows.doesExist(section)
+                rows[section] = {
+                    title: section,
+                    children: [],
+                }
+            end if
+            rows[section].children.Push(GetRowItemData(camera))
         end if
-        rows[letter].children.Push(GetRowItemData(camera))
     end for
     UpdateContent(rows)
 end sub
 
 sub UpdateContent(rows)
     rootChildren = []
-    for each row in rows.items()
-        'row.value.children.SortBy("sortableName")
-        rootChildren.Push(row.value)
-    end for
+    if m.viewMode = m.global.viewMode.list
+        rows.children.SortBy("sortableName")
+        rootChildren = rows.children
+    else
+        for each row in rows.items()
+            'row.value.children.SortBy("sortableName")
+            rootChildren.Push(row.value)
+        end for
+    end if
 
     ' set up a root ContentNode to represent rowList on the GridScreen
     contentNode = CreateObject("roSGNode", "ContentNode")
@@ -100,8 +119,7 @@ function GetRowItemData(camera as object) as object
         sortableName: GetSortableName(name, camera.city),
     }
 
-    viewMode = m.prefs.Read("viewMode")
-    if viewMode = m.global.viewMode.list
+    if m.viewMode = m.global.viewMode.list
         return result
     end if
 

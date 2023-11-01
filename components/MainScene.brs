@@ -22,7 +22,7 @@ sub Init()
         },
         sortMode: {
             NAME: "Name",
-            DISTANCE: "Distance",
+            'DISTANCE: "Distance",
             NEIGHBOURHOOD: "Neighbourhood"
         }
     })
@@ -51,21 +51,17 @@ sub Init()
 
     InitScreenStack()
 
-
     m.optionsPanel = m.top.panelSet.createChild("OptionsPanel")
-    'm.optionsPanel.setFocus(true)
 
     if m.viewMode = m.global.viewMode.GALLERY
-        m.GridScreen = m.top.panelSet.createChild("GridScreen")
+        m.ContentScreen = m.top.panelSet.createChild("GridScreen")
+        m.rowList = m.top.FindNode("rowList")
+        m.rowList.ObserveField("rowItemSelected", "OnItemClicked")
     else
-        m.GridScreen = m.top.panelSet.createChild("GridScreen")
+        m.ContentScreen = m.top.panelSet.createChild("ListScreen")
+        m.rowList = m.top.FindNode("rowList")
+        m.rowList.ObserveField("itemSelected", "OnListItemSelected")
     end if
-    'ShowScreen(m.GridScreen)
-
-    m.rowList = m.top.FindNode("rowList")
-    m.rowList.ObserveField("rowItemSelected", "OnItemClicked")
-
-    'm.GridScreen.observeField("focusedChild", "focusChanged")
 
     m.labelList = m.top.FindNode("labelList")
     m.labelList.ObserveField("itemSelected", "OnItemSelected")
@@ -79,44 +75,74 @@ end sub
 
 
 sub OnItemSelected()
-    if m.labelList.itemSelected = 0
+    VIEW = 0
+    CITY = 1
+    SORT = 2
+    SEARCH = 3
+    SEARCH_NEIGHBOURHOOD = 4
+    FAVOURITE = 5
+    HIDDEN = 6
+    RANDOM = 7
+    SHUFFLE = 8
+    ABOUT = 9
+    if m.labelList.itemSelected = VIEW
         m.viewModeDialog = CreateObject("roSGNode", "RadioDialog")
         m.viewModeDialog.selectedValue = m.viewMode
         m.viewModeDialog.values = m.global.viewMode
         m.viewModeDialog.title = "View"
         m.viewModeDialog.ObserveField("selectedValue", "ViewModeChanged")
         m.top.dialog = m.viewModeDialog
-    else if m.labelList.itemSelected = 1
+    else if m.labelList.itemSelected = CITY
         m.cityDialog = CreateObject("roSGNode", "RadioDialog")
         m.cityDialog.selectedValue = m.city
         m.cityDialog.values = m.global.city
         m.cityDialog.title = "City"
         m.cityDialog.ObserveField("selectedValue", "CityChanged")
         m.top.dialog = m.cityDialog
-    else if m.labelList.itemSelected = 2
+    else if m.labelList.itemSelected = SORT
         m.sortModeDialog = CreateObject("roSGNode", "RadioDialog")
         m.sortModeDialog.selectedValue = m.sortMode
         m.sortModeDialog.values = m.global.sortMode
         m.sortModeDialog.title = "Sort"
         m.sortModeDialog.ObserveField("selectedValue", "SortModeChanged")
         m.top.dialog = m.sortModeDialog
-    else if m.labelList.itemSelected = 3
-    else if m.labelList.itemSelected = 4
-    else if m.labelList.itemSelected = 5
+    else if m.labelList.itemSelected = SEARCH
+    else if m.labelList.itemSelected = SEARCH_NEIGHBOURHOOD
+    else if m.labelList.itemSelected = FAVOURITE
+    else if m.labelList.itemSelected = HIDDEN
+    else if m.labelList.itemSelected = RANDOM
+        index = Rnd(m.rowList.content.getChildCount()) - 1
+        camera = m.rowList.content.GetChild(index) ' get all items of row
+        m.CameraScreen = CreateObject("roSGNode", "CameraScreen")
+        m.CameraScreen.camera = camera
+        ShowScreen(m.CameraScreen) ' show GridScreen
+    else if m.labelList.itemSelected = SHUFFLE
+    else if m.labelList.itemSelected = ABOUT
         m.top.dialog = CreateObject("roSGNode", "AboutDialog")
     end if
 end sub
 
 sub CityChanged()
     m.city = m.cityDialog.selectedValue
-    m.prefs.Write("city", m.city)
     m.top.overhang.title = m.city
+    m.prefs.Write("city", m.city)
     RunContentTask()
 end sub
 
 sub ViewModeChanged()
     m.viewMode = m.viewModeDialog.selectedValue
     m.prefs.Write("viewMode", m.viewMode)
+    if m.viewMode = m.global.viewMode.GALLERY
+        m.ContentScreen = CreateObject("roSGNode", "GridScreen")
+        m.top.panelSet.replaceChild(m.ContentScreen, 0)
+        m.rowList = m.top.FindNode("rowList")
+        m.rowList.ObserveField("rowItemSelected", "OnItemClicked")
+    else
+        m.ContentScreen = CreateObject("roSGNode", "ListScreen")
+        m.top.panelSet.replaceChild(m.ContentScreen, 0)
+        m.rowList = m.top.FindNode("rowList")
+        m.rowList.ObserveField("itemSelected", "OnListItemSelected")
+    end if
     RunContentTask()
 end sub
 
@@ -126,19 +152,18 @@ sub SortModeChanged()
     RunContentTask()
 end sub
 
-sub focusChanged()
-    if m.GridScreen.isInFocusChain()
-        if not m.rowList.hasFocus()
-            m.rowList.setFocus(true)
-        end if
-    else if m.optionsPanel.isInFocusChain()
-        m.labelList.setFocus(true)
-    end if
+sub OnListItemSelected()
+    itemSelected = m.rowList.itemSelected ' get position of focused item
+    camera = m.rowList.content.GetChild(itemSelected) ' get all items of row
+    m.CameraScreen = CreateObject("roSGNode", "CameraScreen")
+    m.CameraScreen.camera = camera
+    ShowScreen(m.CameraScreen) ' show GridScreen
+    ' update title label with title of focused item
 end sub
 
 sub OnItemClicked() ' invoked when another item is focused
-    focusedIndex = m.top.FindNode("rowList").rowItemFocused ' get position of focused item
-    row = m.top.FindNode("rowList").content.GetChild(focusedIndex[0]) ' get all items of row
+    focusedIndex = m.rowList.rowItemFocused ' get position of focused item
+    row = m.rowList.content.GetChild(focusedIndex[0]) ' get all items of row
     item = row.GetChild(focusedIndex[1]) ' get focused item
     m.CameraScreen = CreateObject("roSGNode", "CameraScreen")
     m.CameraScreen.camera = item
@@ -156,6 +181,7 @@ function OnkeyEvent(key as string, press as boolean) as boolean
             ' close top screen if there are two or more screens in the screen stack
             if numberOfScreens > 0
                 CloseScreen(invalid)
+                m.rowList.SetFocus(true)
                 result = true
             end if
         end if

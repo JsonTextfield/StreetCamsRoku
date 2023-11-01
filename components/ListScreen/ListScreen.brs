@@ -3,7 +3,10 @@
 ' entry point of ListScreen
 ' Note that we need to import this file in ListScreen.xml using relative path.
 sub Init()
-    m.list = m.top.FindNode("list")
-    'm.rowList.SetFocus(true)
-    'm.top.observeField("focusedChild", "focusChanged")
+    m.rowList = m.top.FindNode("rowList")
+    m.top.list = m.rowList
+    m.top.panelSize = "wide"
+    m.top.focusable = true
+    m.top.hasNextPanel = false
+    m.top.createNextPanelOnItemFocus = false
 end sub

@@ -2,26 +2,19 @@
 <!--********** Copyright 2020 Roku Corp.  All Rights
 Reserved. **********-->
 
-<component name="ListScreen" extends="Panel" initialFocus="list">
-    <script type="text/brightscript" uri="ListScreen.brs" />
+<component name="ListScreen" extends="ListPanel">
+    <script type="text/brightscript" uri="pkg:/components/ListScreen/ListScreen.brs" />
     <interface>
         <!-- Specifies the content for the Grid -->
-        <field id="content" type="node" alias="list.content"/>
+        <field id="content" type="node" alias="rowList.content" />
     </interface>
     <children>
         <!-- Label with title and length of content -->
         <MarkupList
-            id="list"
+            id="rowList"
             itemComponentName="ListItem"
-            numRows="4"
-            itemSize="[1500,360]"
-            itemSpacing="[0,10]"
-            rowItemSize="[[300,270]]"
-            rowItemSpacing="[[30,0]]"
-            showRowCounter="[true]"
-            rowLabelOffset="[[50,20]]"
-            focusXOffset="[50]"
-            focusBitmapBlendColor="#139BCC"
-            showRowLabel="[true]" />
+            numRows="8"
+            itemSize="[1000,150]"
+            itemSpacing="[0,10]" />
     </children>
 </component>

@@ -4,6 +4,7 @@
 <component name="ListItem" extends="Group">
     <interface>
         <field id="itemContent" type="node" onChange="OnContentSet" />
+        <field id="isFocused" type="boolean" onChange="FocusChanged" />
     </interface>
     <script type="text/brightscript" uri="ListItem.brs" />
     <children>

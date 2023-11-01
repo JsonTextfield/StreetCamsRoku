@@ -2,7 +2,7 @@
 <!--********** Copyright 2020 Roku Corp.  All Rights
 Reserved. **********-->
 
-<component name="GridScreen" extends="Panel">
+<component name="GridScreen" extends="ListPanel">
     <script type="text/brightscript" uri="pkg:/components/GridScreen/GridScreen.brs" />
     <interface>
         <!-- Specifies the content for the Grid -->
@@ -10,10 +10,6 @@ Reserved. **********-->
     </interface>
     <children>
         <!-- Label with title and length of content -->
-        <!--
-
-
-        -->
         <RowList
             id="rowList"
             itemComponentName="RowListItemComponent"

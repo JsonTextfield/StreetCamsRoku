@@ -4,8 +4,9 @@
 ' Note that we need to import this file in GridScreen.xml using relative path.
 sub Init()
     m.rowList = m.top.FindNode("rowList")
-    m.rowList.setFocus(true)
-    m.top.panelSize = "wide"
+    m.top.list = m.rowList
+    m.top.width = 1100
     m.top.focusable = true
     m.top.hasNextPanel = false
+    m.top.createNextPanelOnItemFocus = false
 end sub
