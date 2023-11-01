@@ -8,38 +8,46 @@
     <script type="text/brightscript" uri="CameraScreen.brs" />
     <script type="text/brightscript" uri="../UILogic/ContentTaskLogic.brs" />
     <children>
-        <Poster
-            id="backgroundImage"
-            loadDisplayMode="scaleToFit"
-            loadWidth="1920"
-            loadHeight="1080"
-            width="1920"
-            height="1080">
+        <Rectangle color="#000000" width="1920" height="1080">
+
+            <BusySpinner
+                translation="[500,500]"
+                id="loadingIndicator"
+                spinInterval="0.8"
+            />
             <Poster
-                id="image"
+                id="backgroundImage"
                 loadDisplayMode="scaleToFit"
                 loadWidth="1920"
                 loadHeight="1080"
                 width="1920"
                 height="1080">
-                <Rectangle
-                    id="labelBackground"
-                    translation="[0,1020]"
-                    color="#000000CC"
+                <Poster
+                    id="image"
+                    loadDisplayMode="scaleToFit"
+                    loadWidth="1920"
+                    loadHeight="1080"
                     width="1920"
-                    height="60">
-                    <Label
-                        id="title"
+                    height="1080">
+                    <Rectangle
+                        id="labelBackground"
+                        translation="[0,1020]"
+                        color="#000000CC"
                         width="1920"
-                        height="40"
-                        translation="[50,10]"
-                        vertAlign="center"
-                        horizAlign="center"
-                        wrap="true"
-                        font="font:MediumSystemFont" />
-                </Rectangle>
+                        height="60">
+                        <Label
+                            id="title"
+                            width="1920"
+                            height="40"
+                            translation="[50,10]"
+                            vertAlign="center"
+                            horizAlign="center"
+                            wrap="true"
+                            font="font:MediumSystemFont" />
+                    </Rectangle>
+                </Poster>
             </Poster>
-        </Poster>
+        </Rectangle>
         <Timer id="testTimer" />
     </children>
 </component>
