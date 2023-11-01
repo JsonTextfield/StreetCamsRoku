@@ -26,6 +26,7 @@ sub updateValues()
         m.radioButtons.appendChild(radioButton)
         index++
     end for
+    m.radioButtons.selectedIndex = m.data[m.top.selectedValue]
 end sub
 
 sub setUpPalette()

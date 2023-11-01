@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="OptionsPanel" extends="ListPanel">
-    <script type="text/brightscript" uri="pkg:/components/OptionsPanel.brs" />
+    <script type="text/brightscript" uri="pkg:/components/OptionsPanel/OptionsPanel.brs" />
     <children>
         <LabelList
             id="labelList">
