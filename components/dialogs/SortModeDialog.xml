@@ -3,23 +3,15 @@
 <component name="SortModeDialog" extends="StandardDialog" initialFocus="buttonArea">
 
     <script type="text/brightscript" uri="pkg:/components/dialogs/SortModeDialog.brs" />
+
     <interface>
         <field id="sortMode" type="string" />
     </interface>
+
     <children>
         <StdDlgTitleArea primaryTitle="Sort" />
         <StdDlgContentArea>
-            <StdDlgItemGroup id="radioButtons">
-                <StdDlgActionCardItem iconType="radiobutton">
-                    <SimpleLabel id="radioLabel1" text="Sort by name" />
-                </StdDlgActionCardItem>
-                <StdDlgActionCardItem iconType="radiobutton">
-                    <SimpleLabel id="radioLabel2" text="Sort by distance" />
-                </StdDlgActionCardItem>
-                <StdDlgActionCardItem iconType="radiobutton">
-                    <SimpleLabel id="radioLabel3" text="Sort by neighbourhood" />
-                </StdDlgActionCardItem>
-            </StdDlgItemGroup>
+            <StdDlgItemGroup id="radioButtons" />
         </StdDlgContentArea>
         <StdDlgButtonArea id="buttonArea">
             <StdDlgButton text="OK" />

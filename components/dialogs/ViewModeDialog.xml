@@ -1,30 +1,22 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
-<component name="ViewModeDialog" extends="StandardDialog" initialFocus="buttonArea" >
+<component name="ViewModeDialog" extends="StandardDialog" initialFocus="buttonArea">
 
-<script type="text/brightscript" uri="pkg:/components/dialogs/ViewModeDialog.brs"/>
-<interface>
-    <field id="viewMode" type="string" />
-</interface>
-<children>
-    <StdDlgTitleArea primaryTitle="View" />
-    <StdDlgContentArea>
-        <StdDlgItemGroup id="radioButtons">
-            <StdDlgActionCardItem iconType = "radiobutton">
-                <SimpleLabel id="radioLabel1" text="List" />
-            </StdDlgActionCardItem>
-            <StdDlgActionCardItem iconType = "radiobutton">
-                <SimpleLabel id="radioLabel2" text="Map" />
-            </StdDlgActionCardItem>
-            <StdDlgActionCardItem iconType = "radiobutton">
-                <SimpleLabel id="radioLabel3" text="Gallery" />
-            </StdDlgActionCardItem>
-        </StdDlgItemGroup>
-    </StdDlgContentArea>
-    <StdDlgButtonArea id="buttonArea">
-        <StdDlgButton text="OK" />
-        <StdDlgButton text="Cancel" />
-    </StdDlgButtonArea>
-</children>
+    <script type="text/brightscript" uri="pkg:/components/dialogs/ViewModeDialog.brs" />
+
+    <interface>
+        <field id="viewMode" type="string" />
+    </interface>
+
+    <children>
+        <StdDlgTitleArea primaryTitle="View" />
+        <StdDlgContentArea>
+            <StdDlgItemGroup id="radioButtons" />
+        </StdDlgContentArea>
+        <StdDlgButtonArea id="buttonArea">
+            <StdDlgButton text="OK" />
+            <StdDlgButton text="Cancel" />
+        </StdDlgButtonArea>
+    </children>
 
 </component>
