@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright (c) 2020 Roku, Inc. All rights reserved. -->
 
-<component name="ListItem" extends="LayoutGroup">
+<component name="ListItem" extends="Group">
     <interface>
         <field id="itemContent" type="node" onChange="OnContentSet" />
     </interface>
+    <script type="text/brightscript" uri="ListItem.brs" />
     <children>
-        <Label
-            id="title"
-            width="1920"
-            maxLines="2"
-            wrap="true"
-            font="font:MediumSystemFont"
-        />
-        <Label
-            id="neighbourhood"
-            width="1920"
-            maxLines="2"
-            wrap="true"
-            font="font:SmallestSystemFont"
-        />
+        <LayoutGroup itemSpacings="20" translation="[20,20]">
+            <Label
+                id="title"
+                width="1000"
+                maxLines="2"
+                wrap="true"
+                font="font:MediumSystemFont"
+            />
+            <Label
+                id="neighbourhood"
+                width="1000"
+                maxLines="2"
+                wrap="true"
+                font="font:SmallestSystemFont"
+            />
+        </LayoutGroup>
     </children>
 </component>
