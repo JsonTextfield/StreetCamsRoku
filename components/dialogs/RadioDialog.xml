@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<component name="SortModeDialog" extends="StandardDialog" initialFocus="buttonArea">
+<component name="RadioDialog" extends="StandardDialog" initialFocus="buttonArea">
 
-    <script type="text/brightscript" uri="pkg:/components/dialogs/SortModeDialog.brs" />
+    <script type="text/brightscript" uri="pkg:/components/dialogs/RadioDialog.brs" />
 
     <interface>
-        <field id="sortMode" type="string" />
+        <field id="selectedValue" type="string" />
+        <field id="values" type="assocarray" />
+        <field id="title" type="string" />
     </interface>
 
     <children>
-        <StdDlgTitleArea primaryTitle="Sort" />
+        <StdDlgTitleArea id="dialogTitle" />
         <StdDlgContentArea>
             <StdDlgItemGroup id="radioButtons" />
         </StdDlgContentArea>

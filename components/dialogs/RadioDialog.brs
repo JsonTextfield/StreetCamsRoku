@@ -1,24 +1,32 @@
 function init()
     setUpPalette()
 
+    m.title = m.top.findNode("dialogTitle")
+    m.title.primaryTitle = m.top.title
+
     m.buttonArea = m.top.findNode("buttonArea")
+
     m.top.observeFieldScoped("buttonSelected", "printSelectedButtonAndClose")
+    m.top.observeField("values", "updateValues")
 
     m.radioButtons = m.top.findNode("radioButtons")
 
+end function
+
+sub updateValues()
     index = 0
-    data = {}
-    for each key in m.global.sortMode
-        data[key] = index
+    m.data = {}
+    for each key in m.top.values
+        m.data[key] = index
         radioButton = CreateObject("roSGNode", "StdDlgActionCardItem")
         radioButton.iconType = "radioButton"
         title = CreateObject("roSGNode", "SimpleLabel")
-        title.text = m.global.sortMode[key]
+        title.text = m.top.values[key]
         radioButton.appendChild(title)
         m.radioButtons.appendChild(radioButton)
         index++
     end for
-end function
+end sub
 
 sub setUpPalette()
     ' set a default palette to access the DialogTextColor to use
@@ -49,7 +57,7 @@ sub printSelectedButtonAndClose()
     if m.buttonArea.getChild(m.top.buttonSelected).text = "OK"
         for each key in m.data
             if m.data[key] = m.radioButtons.selectedIndex
-                m.top.sortMode = m.global.sortMode[key]
+                m.top.selectedValue = m.top.values[key]
                 exit for
             end if
         end for
