@@ -10,6 +10,7 @@ function GetSectionIndex(character) as string
 end function
 
 function GetSortableName(name, city) as string
+    if name = invalid then return ""
     if city = m.global.city.montreal
         startIndex = 0
 
@@ -27,7 +28,6 @@ function GetSortableName(name, city) as string
     end if
 
     regex = CreateObject("roRegex", "[^0-9A-ZÀ-Ö]", "i")
-
     return regex.ReplaceAll(name, "")
 end function
 
