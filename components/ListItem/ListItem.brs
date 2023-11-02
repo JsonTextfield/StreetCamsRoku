@@ -8,11 +8,12 @@ sub OnContentSet() ' invoked when item metadata retrieved
 end sub
 
 sub FocusChanged()
-    if m.top.isFocused
+    print "FocusChanged"
+    if m.top.FindNode("group").hasFocus()
         m.top.FindNode("title").color = "#000000"
         m.top.FindNode("neighbourhood").color = "#000000"
     else
-        m.top.FindNode("title").color = "#000000"
-        m.top.FindNode("neighbourhood").text = "#000000"
+        m.top.FindNode("title").color = "#FFFFFF"
+        m.top.FindNode("neighbourhood").color = "#FFFFFF"
     end if
 end sub

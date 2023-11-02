@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (c) 2020 Roku, Inc. All rights reserved. -->
 
 <component name="ListItem" extends="Group">
     <interface>
         <field id="itemContent" type="node" onChange="OnContentSet" />
-        <field id="isFocused" type="boolean" onChange="FocusChanged" />
     </interface>
     <script type="text/brightscript" uri="ListItem.brs" />
     <children>
-        <LayoutGroup itemSpacings="20" translation="[20,20]">
+        <LayoutGroup
+            id="group"
+            itemSpacings="20"
+            translation="[20,20]"
+            focusable="true"
+        >
             <Label
                 id="title"
                 width="1000"

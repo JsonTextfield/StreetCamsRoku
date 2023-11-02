@@ -19,7 +19,7 @@ end sub
 
 sub LoadCameras()
     url = "https://solid-muse-172501.firebaseio.com/cameras.json?orderBy=%22city%22&equalTo=%22" + LCase(m.city) + "%22"
-    ? url
+    print url
     if m.city = m.global.city.ottawa
         ' set the cookies
         urlTransfer = CreateObject("roURLTransfer")
@@ -110,18 +110,16 @@ end function
 function GetRowItemData(camera as object) as object
 
     name = camera.nameEn
+
     if name = "" then name = camera.nameFr
-    result = {
-        id: camera.id,
-        title: name,
-        url: camera.url,
-        city: m.city,
-        neighbourhood: camera.neighbourhood,
-        sortableName: GetSortableName(name, m.city),
-    }
 
-    if m.viewMode = m.global.viewMode.list then return result
+    camera.title = name
+    camera.sortableName = GetSortableName(name, m.city)
+    camera.city = m.city
 
-    result.AddReplace("hdPosterUrl", GetCameraImage(camera))
-    return result
+    if m.viewMode = m.global.viewMode.list then return camera
+
+    camera.hdPosterUrl = GetCameraImage(camera)
+
+    return camera
 end function
