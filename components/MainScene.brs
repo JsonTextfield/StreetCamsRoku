@@ -111,16 +111,23 @@ sub OnItemSelected()
     else if m.labelList.itemSelected = FAVOURITE
     else if m.labelList.itemSelected = HIDDEN
     else if m.labelList.itemSelected = RANDOM
-        index = Rnd(m.rowList.content.getChildCount()) - 1
-        camera = m.rowList.content.GetChild(index) ' get all items of row
         m.CameraScreen = CreateObject("roSGNode", "CameraScreen")
-        m.CameraScreen.camera = camera
+        m.CameraScreen.camera = GetRandomCamera()
         ShowScreen(m.CameraScreen) ' show GridScreen
     else if m.labelList.itemSelected = SHUFFLE
+        m.CameraScreen = CreateObject("roSGNode", "CameraScreen")
+        m.CameraScreen.shuffle = true
+        m.CameraScreen.camera = GetRandomCamera()
+        ShowScreen(m.CameraScreen) ' show GridScreen
     else if m.labelList.itemSelected = ABOUT
         m.top.dialog = CreateObject("roSGNode", "AboutDialog")
     end if
 end sub
+
+function GetRandomCamera() as object
+    index = Rnd(m.rowList.content.getChildCount()) - 1
+    return m.rowList.content.GetChild(index)
+end function
 
 sub CityChanged()
     m.city = m.cityDialog.selectedValue

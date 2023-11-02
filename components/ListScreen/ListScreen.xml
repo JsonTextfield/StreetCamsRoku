@@ -14,7 +14,7 @@ Reserved. **********-->
             id="rowList"
             itemComponentName="ListItem"
             numRows="8"
-            itemSize="[1000,150]"
+            itemSize="[1000,120]"
             itemSpacing="[0,10]" />
     </children>
 </component>

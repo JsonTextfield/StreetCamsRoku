@@ -7,10 +7,6 @@ Reserved. **********-->
     <script type="text/brightscript" uri="UILogic/ScreenStackLogic.brs" />
     <script type="text/brightscript" uri="UILogic/ContentTaskLogic.brs" />
     <children>
-        <!-- LoadingIndicator should be visible only in case of waiting for content -->
-        <BusySpinner
-            id="loadingIndicator"
-            spinInterval="0.8"
-        />
+        <CentreLoadingIndicator />
     </children>
 </component>

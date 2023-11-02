@@ -16,17 +16,33 @@ sub Init()
         deviceInfo.GetDisplaySize().h / 2 - 25
     ]
 
-    m.testtimer = m.top.FindNode("testTimer")
-    m.testtimer.repeat = true
-    m.testtimer.duration = 4
-    m.testtimer.ObserveField("fire", "RunCameraContentTask")
-    m.testtimer.control = "start"
+    m.timer = m.top.FindNode("timer")
+    m.timer.ObserveField("fire", "RunCameraContentTask")
+    m.timer.control = "start"
 end sub
 
 sub RunCameraContentTask()
+    ? "Run Content Task"
     m.top.FindNode("backgroundImage").uri = m.top.FindNode("image").uri
     m.contentTask = CreateObject("roSGNode", "CameraLoaderTask") ' create task for feed retrieving
-    m.contentTask.content = m.top.camera
+    if m.top.shuffle
+        camera = m.global.cameras[Rnd(m.global.cameras.count()) - 1]
+        name = camera.nameEn
+        if name = "" then name = camera.nameFr
+        contentNode = CreateObject("roSGNode", "ContentNode")
+        contentNode.Update({
+            id: camera.id,
+            title: name,
+            url: camera.url,
+            city: camera.city,
+            neighbourhood: camera.neighbourhood,
+            sortableName: camera.sortableName,
+            hdPosterUrl: GetCameraImage(camera)
+        }, true)
+        m.contentTask.content = contentNode
+    else
+        m.contentTask.content = m.top.camera
+    end if
     ' observe content so we can know when feed content will be parsed
     m.contentTask.ObserveField("content", "OnCameraContentLoaded")
     m.contentTask.control = "run" ' GetContent(see MainLoaderTask.brs) method is executed
@@ -38,11 +54,9 @@ sub OnCameraContentLoaded() ' invoked when content is ready to be used
 end sub
 
 sub OnContentSet() ' invoked when item metadata retrieved
-    camera = m.top.camera
-    ' set poster uri if content is valid
-    if camera <> invalid
-        m.top.FindNode("image").uri = camera.hdPosterUrl
-        m.top.FindNode("title").text = camera.title
+    if m.top.camera <> invalid
+        m.top.FindNode("image").uri = m.top.camera.hdPosterUrl
+        m.top.FindNode("title").text = m.top.camera.title
     end if
 end sub
 
@@ -51,7 +65,7 @@ function OnkeyEvent(key as string, press as boolean) as boolean
     if press
         ' handle "back" key press
         if key = "back"
-            m.testtimer.control = "stop"
+            m.timer.control = "stop"
         end if
     end if
     ' The OnKeyEvent() function must return true if the component handled the event,

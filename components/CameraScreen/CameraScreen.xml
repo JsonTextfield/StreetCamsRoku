@@ -4,17 +4,13 @@
 <component name="CameraScreen" extends="Group">
     <interface>
         <field id="camera" type="node" onChange="OnContentSet" />
+        <field id="shuffle" type="boolean" value="false" />
     </interface>
     <script type="text/brightscript" uri="CameraScreen.brs" />
-    <script type="text/brightscript" uri="../UILogic/ContentTaskLogic.brs" />
+    <script type="text/brightscript" uri="pkg:/components/util/CameraUtils.brs"/>
     <children>
         <Rectangle color="#000000" width="1920" height="1080">
-
-            <BusySpinner
-                translation="[500,500]"
-                id="loadingIndicator"
-                spinInterval="0.8"
-            />
+            <CentreLoadingIndicator/>
             <Poster
                 id="backgroundImage"
                 loadDisplayMode="scaleToFit"
@@ -48,6 +44,9 @@
                 </Poster>
             </Poster>
         </Rectangle>
-        <Timer id="testTimer" />
+        <Timer
+            id="timer"
+            repeat="true"
+            duration="8" />
     </children>
 </component>

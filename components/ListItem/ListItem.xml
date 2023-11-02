@@ -12,16 +12,18 @@
             <Label
                 id="title"
                 width="1000"
-                maxLines="2"
+                maxLines="1"
                 wrap="true"
                 font="font:MediumSystemFont"
+                color="#444444"
             />
             <Label
                 id="neighbourhood"
                 width="1000"
-                maxLines="2"
+                maxLines="1"
                 wrap="true"
                 font="font:SmallestSystemFont"
+                color="#444444"
             />
         </LayoutGroup>
     </children>
