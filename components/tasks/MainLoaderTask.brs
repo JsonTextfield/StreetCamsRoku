@@ -13,8 +13,23 @@ sub Init()
 end sub
 
 sub GetContent()
+    GetLocation()
     LoadCameras()
     CreateContentNode()
+end sub
+
+sub GetLocation()
+    ipAddress = CreateObject("roDeviceInfo").GetExternalIp()
+
+    url = "http://ip-api.com/json/" + ipAddress
+    print url
+
+    urlTransfer = CreateObject("roURLTransfer")
+    urlTransfer.setUrl(url)
+    urlTransfer.SetCertificatesFile("common:/certs/ca-bundle.crt")
+
+    m.currentLocation = ParseJson(urlTransfer.GetToString())
+
 end sub
 
 sub LoadCameras()
@@ -35,7 +50,9 @@ sub LoadCameras()
     if jsonArray <> invalid
         m.cameras = []
         for each index in jsonArray
-            m.cameras.Push(jsonArray[index])
+            camera = jsonArray[index]
+            camera.distance = haversine(camera.location.lat, camera.location.lon, m.currentLocation.lat, m.currentLocation.lon)
+            m.cameras.Push(camera)
         end for
         m.global.Update({ cameras: m.cameras }, true)
     end if
@@ -74,8 +91,10 @@ sub UpdateContent(rows)
     if m.viewMode = m.global.viewMode.list
         if m.sortMode = m.global.sortMode.neighbourhood
             rows.children.SortBy("neighbourhood")
-        else
+        else if m.sortMode = m.global.sortMode.name
             rows.children.SortBy("sortableName")
+        else if m.sortMode = m.global.sortMode.distance
+            rows.children.SortBy("distance")
         end if
         rootChildren = rows.children
     else
@@ -122,4 +141,44 @@ function GetRowItemData(camera as object) as object
     camera.hdPosterUrl = GetCameraImage(camera)
 
     return camera
+end function
+
+function degreesToRadians(degrees as float) as float
+    return degrees * 3.14159265358979323846 / 180
+end function
+
+function haversine(lat1 as float, lon1 as float, lat2 as float, lon2 as float) as float
+    ' Radius of the Earth in meters
+    earthRadius = 6371000 ' approximately 6371 km
+    ' Convert latitude and longitude from degrees to radians
+    lat1Rad = degreesToRadians(lat1)
+    lon1Rad = degreesToRadians(lon1)
+    lat2Rad = degreesToRadians(lat2)
+    lon2Rad = degreesToRadians(lon2)
+
+    ' Haversine formula
+    dlat = lat2Rad - lat1Rad
+    dlon = lon2Rad - lon1Rad
+
+    a = Sin(dlat / 2) ^ 2 + Cos(lat1Rad) * Cos(lat2Rad) * Sin(dlon / 2) ^ 2
+    c = 2 * Atn2(Sqr(a), Sqr(1 - a))
+
+    ' Calculate the distance
+    distance = earthRadius * c
+
+    return distance
+end function
+
+function Atn2(y, x)
+    if x < 0 then
+        if y >= 0 then
+            return Atn(y / x) + 3.141592653589793
+        else
+            return Atn(y / x) - 3.141592653589793
+        end if
+    else if y >= 0 then
+        return Atn(y / x)
+    else
+        return Atn(y / x) + 6.283185307179586
+    end if
 end function

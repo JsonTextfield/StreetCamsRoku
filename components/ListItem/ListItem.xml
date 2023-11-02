@@ -11,23 +11,27 @@
             itemSpacings="20"
             translation="[20,20]"
             focusable="true"
+            layoutDirection="horiz"
         >
-            <Label
-                id="title"
-                width="1000"
-                maxLines="1"
-                wrap="true"
-                font="font:MediumSystemFont"
-                color="#444444"
-            />
-            <Label
-                id="neighbourhood"
-                width="1000"
-                maxLines="1"
-                wrap="true"
-                font="font:SmallestSystemFont"
-                color="#444444"
-            />
+            <LayoutGroup
+                itemSpacings="20">
+                <Label
+                    id="title"
+                    width="1000"
+                    maxLines="1"
+                    wrap="true"
+                    font="font:MediumSystemFont"
+                    color="#444444"
+                />
+                <Label
+                    id="neighbourhood"
+                    width="1000"
+                    maxLines="1"
+                    wrap="true"
+                    font="font:SmallestSystemFont"
+                    color="#444444"
+                />
+            </LayoutGroup>
         </LayoutGroup>
     </children>
 </component>

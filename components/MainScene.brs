@@ -22,43 +22,38 @@ sub Init()
         },
         sortMode: {
             NAME: "Name",
-            'DISTANCE: "Distance",
+            DISTANCE: "Distance",
             NEIGHBOURHOOD: "Neighbourhood"
         }
     })
 
+    m.city = m.global.city.ottawa
+    m.viewMode = m.global.viewMode.gallery
+    m.sortMode = m.global.sortMode.name
+
     m.prefs = CreateObject("roRegistrySection", "prefs")
 
-    m.city = m.prefs.Read("city")
-    m.viewMode = m.prefs.Read("viewMode")
-    m.sortMode = m.prefs.Read("sortMode")
+    if m.prefs.Exists("city") then m.city = m.prefs.Read("city")
+    if m.prefs.Exists("viewMode") then m.viewMode = m.prefs.Read("viewMode")
+    if m.prefs.Exists("sortMode") then m.sortMode = m.prefs.Read("sortMode")
+
 
     ' set background color for scene. Applied only if backgroundUri has empty value
     m.top.backgroundColor = "#000000"
     m.top.backgroundUri = ""
 
-    deviceInfo = CreateObject("roDeviceInfo")
-
     m.loadingIndicator = m.top.FindNode("loadingIndicator")
-    m.loadingIndicator.poster.loadDisplayMode = "scaleToFit"
-    m.loadingIndicator.poster.width = 50
-    m.loadingIndicator.poster.height = 50
-    m.loadingIndicator.poster.uri = "pkg:/images/loader.png"
-    m.loadingIndicator.translation = [
-        deviceInfo.GetDisplaySize().w / 2 - 25,
-        deviceInfo.GetDisplaySize().h / 2 - 25
-    ]
 
     InitScreenStack()
 
-    m.optionsPanel = m.top.panelSet.createChild("OptionsPanel")
+    m.top.panelSet.createChild("OptionsPanel")
 
-    if m.viewMode = m.global.viewMode.GALLERY
-        m.ContentScreen = m.top.panelSet.createChild("GridScreen")
+    if m.viewMode = m.global.viewMode.gallery
+        m.top.panelSet.createChild("GridScreen")
         m.rowList = m.top.FindNode("rowList")
         m.rowList.ObserveField("rowItemSelected", "OnItemClicked")
     else
-        m.ContentScreen = m.top.panelSet.createChild("ListScreen")
+        m.top.panelSet.createChild("ListScreen")
         m.rowList = m.top.FindNode("rowList")
         m.rowList.ObserveField("itemSelected", "OnListItemSelected")
     end if
@@ -151,15 +146,15 @@ end sub
 
 sub ViewModeChanged()
     m.viewMode = m.viewModeDialog.selectedValue
+    if m.viewMode = m.global.viewMode.gallery and m.sortMode = m.global.sortMode.distance then m.sortMode = m.global.sortMode.name
     m.prefs.Write("viewMode", m.viewMode)
+    m.prefs.Write("sortMode", m.sortMode)
     if m.viewMode = m.global.viewMode.GALLERY
-        m.ContentScreen = CreateObject("roSGNode", "GridScreen")
-        m.top.panelSet.replaceChild(m.ContentScreen, 0)
+        m.top.panelSet.replaceChild(CreateObject("roSGNode", "GridScreen"), 1)
         m.rowList = m.top.FindNode("rowList")
         m.rowList.ObserveField("rowItemSelected", "OnItemClicked")
     else
-        m.ContentScreen = CreateObject("roSGNode", "ListScreen")
-        m.top.panelSet.replaceChild(m.ContentScreen, 0)
+        m.top.panelSet.replaceChild(CreateObject("roSGNode", "ListScreen"), 1)
         m.rowList = m.top.FindNode("rowList")
         m.rowList.ObserveField("itemSelected", "OnListItemSelected")
     end if
@@ -168,7 +163,9 @@ end sub
 
 sub SortModeChanged()
     m.sortMode = m.sortModeDialog.selectedValue
+    if m.sortMode = m.global.sortMode.distance then m.viewMode = m.global.viewMode.list
     m.prefs.Write("sortMode", m.sortMode)
+    m.prefs.Write("viewMode", m.viewMode)
     RunContentTask()
 end sub
 
