@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<component name="CentreLoadingIndicator" extends="Group">
+    <script type="text/brightscript" uri="CentreLoadingIndicator.brs" />
+    <children>
+        <BusySpinner
+            id="loadingIndicator"
+            spinInterval="0.8"
+        />
+    </children>
+</component>
