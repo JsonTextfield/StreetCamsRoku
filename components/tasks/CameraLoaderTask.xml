@@ -7,4 +7,5 @@
     </interface>
 
     <script type="text/brightscript" uri="CameraLoaderTask.brs" />
+    <script type="text/brightscript" uri="pkg:/components/util/CameraUtils.brs"/>
 </component>

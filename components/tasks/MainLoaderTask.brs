@@ -12,17 +12,15 @@ sub Init()
 
 end sub
 
-
 sub GetContent()
-    LoadCameras(m.city)
-    CreateContentNode(m.city, m.sortMode, m.viewMode)
+    LoadCameras()
+    CreateContentNode()
 end sub
 
-sub LoadCameras(city)
-    jsonArray = []
-    url = "https://solid-muse-172501.firebaseio.com/cameras.json?orderBy=%22city%22&equalTo=%22" + LCase(city) + "%22"
+sub LoadCameras()
+    url = "https://solid-muse-172501.firebaseio.com/cameras.json?orderBy=%22city%22&equalTo=%22" + LCase(m.city) + "%22"
     ? url
-    if city = m.global.city.ottawa
+    if m.city = m.global.city.ottawa
         ' set the cookies
         urlTransfer = CreateObject("roURLTransfer")
         urlTransfer.SetURL("https://traffic.ottawa.ca/map/")
@@ -35,29 +33,26 @@ sub LoadCameras(city)
     end if
     jsonArray = GetJsonArray(url)
     if jsonArray <> invalid
-        rows = {}
         m.cameras = []
         for each index in jsonArray
             m.cameras.Push(jsonArray[index])
         end for
-        m.global.addFields({
-            cameras: m.cameras
-        })
+        m.global.Update({ cameras: m.cameras }, true)
     end if
 end sub
 
-sub CreateContentNode(city, sortMode, viewMode)
+sub CreateContentNode()
     rows = {}
-    if viewMode = m.global.viewMode.list then rows.children = []
+    if m.viewMode = m.global.viewMode.list then rows.children = []
     for each camera in m.cameras
-        if viewMode = m.global.viewMode.list
+        if m.viewMode = m.global.viewMode.list
             rows.children.Push(GetRowItemData(camera))
         else
             section = ""
-            if sortMode = m.global.sortMode.name
+            if m.sortMode = m.global.sortMode.name
                 name = camera.nameEn
                 if name = "" then name = camera.nameFr
-                section = GetSectionIndex(GetSortableName(name, city).split("")[0])
+                section = GetSectionIndex(GetSortableName(name, m.city).split("")[0])
             else
                 section = camera.neighbourhood
             end if
@@ -77,20 +72,26 @@ end sub
 sub UpdateContent(rows)
     rootChildren = []
     if m.viewMode = m.global.viewMode.list
-        rows.children.SortBy("sortableName")
+        if m.sortMode = m.global.sortMode.neighbourhood
+            rows.children.SortBy("neighbourhood")
+        else
+            rows.children.SortBy("sortableName")
+        end if
         rootChildren = rows.children
     else
         for each row in rows.items()
-            'row.value.children.SortBy("sortableName")
+            if m.sortMode = m.global.sortMode.neighbourhood
+                row.value.children.SortBy("neighbourhood")
+            else
+                row.value.children.SortBy("sortableName")
+            end if
             rootChildren.Push(row.value)
         end for
     end if
 
     ' set up a root ContentNode to represent rowList on the GridScreen
     contentNode = CreateObject("roSGNode", "ContentNode")
-    contentNode.Update({
-        children: rootChildren
-    }, true)
+    contentNode.Update({ children: rootChildren }, true)
     ' populate content field with root content node.
     ' Observer(see OnMainContentLoaded in MainScene.brs) is invoked at that moment
     m.top.content = contentNode
@@ -114,30 +115,13 @@ function GetRowItemData(camera as object) as object
         id: camera.id,
         title: name,
         url: camera.url,
-        city: camera.city,
+        city: m.city,
         neighbourhood: camera.neighbourhood,
-        sortableName: GetSortableName(name, camera.city),
+        sortableName: GetSortableName(name, m.city),
     }
 
-    if m.viewMode = m.global.viewMode.list
-        return result
-    end if
+    if m.viewMode = m.global.viewMode.list then return result
 
     result.AddReplace("hdPosterUrl", GetCameraImage(camera))
     return result
-end function
-
-function GetCameraImage(camera) as string
-    if camera.city <> m.global.city.ottawa then return camera.url
-    file = "tmp:/" + CreateObject("roDeviceInfo").GetRandomUUID() + ".jpg"
-
-    utrans = CreateObject("roURLTransfer")
-    utrans.SetURL(camera.url)
-    utrans.SetCertificatesFile("common:/certs/ca-bundle.crt")
-    if camera.city = m.global.city.ottawa
-        utrans.AddHeader("Cookie", "JSESSIONID=" + m.global.cookies.value.toStr())
-    end if
-    utrans.GetToFile(file)
-
-    return file
 end function
