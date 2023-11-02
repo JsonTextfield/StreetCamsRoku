@@ -125,8 +125,21 @@ sub OnItemSelected()
 end sub
 
 function GetRandomCamera() as object
-    index = Rnd(m.rowList.content.getChildCount()) - 1
-    return m.rowList.content.GetChild(index)
+    contentNode = CreateObject("roSGNode", "ContentNode")
+    camera = m.global.cameras[Rnd(m.global.Cameras.count()) - 1]
+
+    name = camera.nameEn
+
+    if name = "" then name = camera.nameFr
+
+    contentNode.Update({
+        city: m.global.city[camera.city],
+        title: name,
+        url: camera.url,
+        hdPosterUrl: GetCameraImage(camera)
+    }, true)
+
+    return contentNode
 end function
 
 sub CityChanged()

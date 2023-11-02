@@ -6,6 +6,7 @@ Reserved. **********-->
     <script type="text/brightscript" uri="MainScene.brs" />
     <script type="text/brightscript" uri="UILogic/ScreenStackLogic.brs" />
     <script type="text/brightscript" uri="UILogic/ContentTaskLogic.brs" />
+    <script type="text/brightscript" uri="pkg:/components/util/CameraUtils.brs" />
     <children>
         <CentreLoadingIndicator />
     </children>
