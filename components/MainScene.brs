@@ -99,7 +99,7 @@ sub OnItemSelected()
         m.sortModeDialog = CreateObject("roSGNode", "RadioDialog")
         m.sortModeDialog.selectedValue = m.sortMode
         m.sortModeDialog.values = m.global.sortMode
-        m.sortModeDialog.title = "Sort"
+        m.sortModeDialog.title = "Sort by..."
         m.sortModeDialog.ObserveField("selectedValue", "SortModeChanged")
         m.top.dialog = m.sortModeDialog
     else if m.labelList.itemSelected = SEARCH

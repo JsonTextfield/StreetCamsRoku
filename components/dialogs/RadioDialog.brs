@@ -16,7 +16,9 @@ end function
 sub updateValues()
     index = 0
     m.data = {}
-    for each key in m.top.values
+    sortedKeys = m.top.values.keys()
+    sortedKeys.Sort()
+    for each key in sortedKeys
         m.data[key] = index
         radioButton = CreateObject("roSGNode", "StdDlgActionCardItem")
         radioButton.iconType = "radioButton"
