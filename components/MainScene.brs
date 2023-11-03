@@ -46,7 +46,8 @@ sub Init()
 
     InitScreenStack()
 
-    m.top.panelSet.createChild("OptionsPanel")
+    m.optionsPanel = m.top.panelSet.createChild("OptionsPanel")
+    m.optionsPanel.overhangTitle = m.city
 
     if m.viewMode = m.global.viewMode.gallery
         m.top.panelSet.createChild("GridScreen")
