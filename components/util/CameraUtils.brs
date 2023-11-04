@@ -65,3 +65,23 @@ function GetCameraImage(camera) as string
 
     return file
 end function
+
+function GetVancouverImages(url) as object
+    htmlRequest = CreateObject("roURLTransfer")
+    htmlRequest.SetURL(url)
+    htmlRequest.SetCertificatesFile("common:/certs/ca-bundle.crt")
+
+    response = htmlRequest.GetToString()
+
+    regex = CreateObject("roRegex", "cameraimages/.*?" + Chr(34), "i")
+    data = regex.MatchAll(response)
+
+    result = []
+    for each array in data
+        uuid = CreateObject("roDeviceInfo").GetRandomUUID()
+        cameraId = array[0].Replace(Chr(34), "")
+        result.Push("https://trafficcams.vancouver.ca/" + cameraId + "?uuid=" + uuid)
+    end for
+
+    return result
+end function

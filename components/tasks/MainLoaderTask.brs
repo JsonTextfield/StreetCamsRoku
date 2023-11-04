@@ -138,7 +138,12 @@ function GetRowItemData(camera as object) as object
 
     if m.viewMode = m.global.viewMode.list then return camera
 
-    camera.hdPosterUrl = GetCameraImage(camera)
+    if camera.city = m.global.city.vancouver
+        cameraUrls = GetVancouverImages(camera.url)
+        camera.hdPosterUrl = cameraUrls[0]
+    else
+        camera.hdPosterUrl = GetCameraImage(camera)
+    end if
 
     return camera
 end function

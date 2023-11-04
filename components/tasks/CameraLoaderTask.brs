@@ -17,7 +17,12 @@ sub GetContent()
         contentNode.title = name
     end if
 
-    contentNode.hdPosterUrl = GetCameraImage(contentNode)
+    if contentNode.city = m.global.city.vancouver
+        cameraUrls = GetVancouverImages(contentNode.url)
+        contentNode.hdPosterUrl = cameraUrls[Rnd(cameraUrls.count()) - 1]
+    else
+        contentNode.hdPosterUrl = GetCameraImage(contentNode)
+    end if
 
     m.top.content = contentNode
 end sub
